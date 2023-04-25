@@ -63,7 +63,7 @@
                 @foreach (var image in pet.value.Images)
                 {
                     <div class="carousel-item @(first?Html.Raw("active"):Html.Raw(""))">
-                        <img class="d-block w-100" src="@image.FileName" alt="@image.FileName">
+                        <img class="d-block w-100" src="@image." alt="@image.FileName">
                     </div>
                     first = false;
                 }

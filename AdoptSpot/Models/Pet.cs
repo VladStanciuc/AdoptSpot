@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using AdoptSpot.Data.Base;
 using AdoptSpot.Data.Enums;
 namespace AdoptSpot.Models
 {
-    public class Pet
+    public class Pet : IEntityBase
     {
         [Key]
         public int Id { get; set; }
@@ -25,6 +26,9 @@ namespace AdoptSpot.Models
         public ICollection<Image> Images { get; set; }
 
         //Relationships
-
+        public Pet()
+        {
+            Images = new List<Image>();
+        }
     }
 }
