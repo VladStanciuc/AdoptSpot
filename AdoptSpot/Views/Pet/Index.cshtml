@@ -9,7 +9,7 @@
             display: inline-block;
             vertical-align: top;
             width: calc(33.33% - 10px);
-            height: 350px;
+            height: 600px;
             margin-right: 20px;
             margin-bottom: 20px;
             border-radius: 16px;
@@ -52,45 +52,45 @@
 <div class="grid-container">
     @foreach (var pet in Model.Select((value, index) => new { value, index }))
     {
-        <div class="grid-item">
-            <!-- Swiper -->
-            <div id="carouselExampleControls-@pet.index" class="carousel slide" data-ride="carousel">
+    <div class="grid-item">
+        <!-- Swiper -->
+        <div id="carouselExampleControls-@pet.index" class="carousel slide" data-ride="carousel" data-interval="false">
 
-                <div class="carousel-inner">
-                    @{
-                        var first = true;
-                    }
-                    @foreach (var image in pet.value.Images)
-                    {
-                        <div class="carousel-item @(first?Html.Raw("active"):Html.Raw(""))">
-                            <img class="d-block w-100" src="@image.FileName" alt="@image.FileName">
-                        </div>
-                        first = false;
-                    }
-                </div>
-                <a class="carousel-control-prev" href="#carouselExampleControls-@pet.index" role="button" data-slide="prev">
-
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Previous</span>
-                </a>
-                <a class="carousel-control-next" href="#carouselExampleControls-@pet.index" role="button" data-slide="next">
-
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Next</span>
-                </a>
+            <div class="carousel-inner">
+                @{
+                    var first = true;
+                }
+                @foreach (var image in pet.value.Images)
+                {
+                    <div class="carousel-item @(first?Html.Raw("active"):Html.Raw(""))">
+                        <img class="d-block w-100" src="@image.FileName" alt="@image.FileName">
+                    </div>
+                    first = false;
+                }
             </div>
-            <!-- End of Swiper -->
-            <div class="pet-title">@pet.value.Name</div>
-            <!-- Pet properties -->
-            <div class="pet-info">
-                <p><strong>Species:</strong> @pet.value.Species</p>
-                <p><strong>Age:</strong> @pet.value.Age</p>
-                <p><strong>Gender:</strong> @pet.value.PetGender</p>
-                <p><strong>Color:</strong> @pet.value.Color</p>
-                <p><strong>Breed:</strong> @pet.value.Breed</p>
-                <p><strong>Description:</strong> @pet.value.Description</p>
-            </div>
+            <a class="carousel-control-prev" href="#carouselExampleControls-@pet.index" role="button" data-slide="prev">
+
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleControls-@pet.index" role="button" data-slide="next">
+
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
         </div>
+        <!-- End of Swiper -->
+        <div class="pet-title">@pet.value.Name</div>
+        <!-- Pet properties -->
+        <div class="pet-info">
+            <p><strong>Species:</strong> @pet.value.Species</p>
+            <p><strong>Age:</strong> @pet.value.Age</p>
+            <p><strong>Gender:</strong> @pet.value.PetGender</p>
+            <p><strong>Color:</strong> @pet.value.Color</p>
+            <p><strong>Breed:</strong> @pet.value.Breed</p>
+            <p><strong>Description:</strong> @pet.value.Description</p>
+        </div>
+    </div>
     }
 
 </div>
