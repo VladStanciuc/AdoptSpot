@@ -1,5 +1,4 @@
-﻿
-using AdoptSpot.Data.Base;
+﻿using AdoptSpot.Data.Base;
 using AdoptSpot.Models;
 using System;
 using System.Collections.Generic;
@@ -8,16 +7,11 @@ using System.Threading.Tasks;
 
 namespace AdoptSpot.Data.Services
 {
-    public class PetService : EntityBaseRepository<Pet>, IPetService
+    public class ImageService:EntityBaseRepository<Image>, IImageService
     {
-        
-
-        public PetService(AppDbContext context) : base(context)
+        public ImageService(AppDbContext context) : base(context)
         {
 
         }
-        
-
-
     }
 }

@@ -36,6 +36,9 @@ namespace AdoptSpot.Data.Base
 
             return result;
         }
+      
+
+
 
         public async Task<IEnumerable<T>> GetAllAsync(params Expression<Func<T, object>>[] includeProperties)
         {

@@ -6,12 +6,19 @@
 
 <h2>Create Pet</h2>
 
-<form asp-action="Create">
+<form asp-action="Create" method="post" enctype="multipart/form-data">
     <div class="form-group">
         <label asp-for="Name">Name</label>
         <input asp-for="Name" class="form-control" />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
+    <div class="form-group">
+        <label for="images">Images</label>
+        <input asp-for="Images" type="file" multiple id="imageInput" />
+
+        <span asp-validation-for="Images" class="text-danger"></span>
+    </div>
+
     <div class="form-group">
         <label asp-for="TypeId">Type ID</label>
         <input asp-for="TypeId" class="form-control" />
@@ -56,5 +63,55 @@
 </form>
 
 @section Scripts {
+    <script>
+
+        function cropImage(img, newWidth, newHeight) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = newWidth;
+            canvas.height = newHeight;
+
+            const aspectRatio = img.width / img.height;
+
+            let sourceWidth = img.width;
+            let sourceHeight = img.height;
+            let sourceX = 0;
+            let sourceY = 0;
+
+            if (aspectRatio > newWidth / newHeight) {
+                sourceHeight = img.width / (newWidth / newHeight);
+                sourceY = (img.height - sourceHeight) / 2;
+            } else {
+                sourceWidth = img.height * (newWidth / newHeight);
+                sourceX = (img.width - sourceWidth) / 2;
+            }
+
+            ctx.drawImage(img, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, newWidth, newHeight);
+            return canvas;
+        }
+
+        document.getElementById('imageInput').addEventListener('change', function (event) {
+            const files = event.target.files;
+            if (!files) return;
+
+            const targetWidth = 800; // Set the target width for resized images
+            const targetHeight = 600; // Set the target height for resized images
+
+            for (const file of files) {
+                const img = new Image();
+                img.src = URL.createObjectURL(file);
+                img.onload = function () {
+                    const canvas = cropImage(img, targetWidth, targetHeight);
+
+                    // Convert the resized and cropped image to a Blob
+                    canvas.toBlob(function (blob) {
+                        // Process the resized image Blob (e.g., upload to a server)
+                        console.log(blob);
+                    }, 'image/jpeg', 0.95);
+                };
+            }
+        });
+
+    </script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

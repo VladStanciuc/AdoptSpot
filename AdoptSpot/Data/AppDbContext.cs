@@ -19,6 +19,7 @@ namespace AdoptSpot.Data
         public DbSet<Adoption> Adoptions { get; set; }
         public DbSet<MedicalHistory> MedicalHistories { get; set; }
         public DbSet<Image> Images { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Adoption>()
