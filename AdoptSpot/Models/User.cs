@@ -9,6 +9,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AdoptSpot.Models
 {
+    [Table("User")]
     public class User
     {
         [Key]

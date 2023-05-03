@@ -4,14 +4,16 @@ using AdoptSpot.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AdoptSpot.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230426200822_AddNewTables")]
+    partial class AddNewTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,7 +52,7 @@ namespace AdoptSpot.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Adoption");
+                    b.ToTable("Adoptions");
                 });
 
             modelBuilder.Entity("AdoptSpot.Models.Image", b =>
@@ -76,7 +78,7 @@ namespace AdoptSpot.Migrations
 
                     b.HasIndex("PetId");
 
-                    b.ToTable("Image");
+                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("AdoptSpot.Models.MedicalRecord", b =>
@@ -156,7 +158,7 @@ namespace AdoptSpot.Migrations
 
                     b.HasIndex("MedicalRecordId");
 
-                    b.ToTable("MedicalTreatment");
+                    b.ToTable("MedicalTreatments");
                 });
 
             modelBuilder.Entity("AdoptSpot.Models.Pet", b =>
@@ -195,7 +197,7 @@ namespace AdoptSpot.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Pet");
+                    b.ToTable("Pets");
                 });
 
             modelBuilder.Entity("AdoptSpot.Models.User", b =>
@@ -237,7 +239,7 @@ namespace AdoptSpot.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("User");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("AdoptSpot.Models.Vaccination", b =>

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using AdoptSpot.Data.Base;
 using AdoptSpot.Data.Enums;
 namespace AdoptSpot.Models
 {
+    [Table("Pet")]
     public class Pet : IEntityBase
     {
         [Key]
@@ -22,7 +24,7 @@ namespace AdoptSpot.Models
         public DateTime CreatedAt { get; set; }
         // public DateTime UpdatedAt { get; set; }
         public ICollection<Adoption> Adoptions { get; set; }
-        public ICollection<MedicalHistory> MedicalHistories { get; set; }
+        public MedicalRecord MedicalRecord { get; set; }
         public ICollection<Image> Images { get; set; }
 
         //Relationships
