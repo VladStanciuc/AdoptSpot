@@ -93,7 +93,7 @@
                     {
                         <div class="carousel-item @(first?Html.Raw("active"):Html.Raw("")) item1" style="background-image: url('@Url.Action("GetImage", "Image", new { id = image.Id })')">
                         </div>
-
+                       
                         first = false;
                     }
 
@@ -119,6 +119,10 @@
                 <p><strong>Color:</strong> @pet.value.Color</p>
                 <p><strong>Breed:</strong> @pet.value.Breed</p>
                 <p><strong>Description:</strong> @pet.value.Description</p>
+                <a href="@Url.Action("Details", "Pet", new { id = pet.value.Id })" class="btn btn-primary">Show Details</a>
+                <a href="@Url.Action("Edit", "Pet", new { id = pet.value.Id })" class="btn btn-warning">Edit</a>
+                <a href="@Url.Action("Delete", "Pet", new { id = pet.value.Id })" class="btn btn-danger">Delete</a>
+
             </div>
         </div>
     }

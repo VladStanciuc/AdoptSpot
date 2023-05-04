@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AdoptSpot.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Collections.Generic;
@@ -50,7 +51,20 @@ namespace AdoptSpot.Data.Base
         public async Task<T> GetByIdAsync(int id)
         {
             var result = await _context.Set<T>().FirstOrDefaultAsync(n => n.Id == id);
+            
             return result;
+        }
+
+        public async Task<Pet> GetByIdAsync(int id, Func<IQueryable<Pet>, IQueryable<Pet>> include = null)
+        {
+            IQueryable<Pet> query = _context.Pets;
+
+            if (include != null)
+            {
+                query = include(query);
+            }
+
+            return await query.FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task UpdateAsync(int id, T entity)

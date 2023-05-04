@@ -65,8 +65,6 @@ namespace AdoptSpot.Controllers
                                 ContentType = image.ContentType,
                                 Data = memoryStream.ToArray()
                             };
-
-
                             pet.Images.Add(img);
 
                         }
@@ -90,29 +88,72 @@ namespace AdoptSpot.Controllers
         [Route("Edit/{id}")]
         public async Task<IActionResult> Edit(int id)
         {
-            var actorDetails = await _service.GetByIdAsync(id);
+            var petDetails = await _service.GetByIdAsync(id, include: p => p.Include(p => p.Images));
 
-            if (actorDetails == null)
+            if (petDetails == null)
             {
                 return View("NotFound");
             }
             else
             {
-                return View(actorDetails);
+                return View(petDetails);
             }
 
         }
         [HttpPost]
         [Route("Edit/{id}")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,TypeId,Species,Age,PetGender,Color,Breed,Description,CreatedAt,Adoptions,MedicalHistories,Images")] Pet pet)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,TypeId,Species,Age,PetGender,Color,Breed,Description,CreatedAt,Adoptions,MedicalHistories,Images")] Pet pet, List<IFormFile> newImages)
         {
             if (!ModelState.IsValid)
             {
                 return View(pet);
             }
-            await _service.UpdateAsync(id, pet);
+
+            // Retrieve the pet from the database
+            var petToUpdate = await _service.GetByIdAsync(id, include: p => p.Include(p => p.Images));
+            if (petToUpdate == null)
+            {
+                return NotFound();
+            }
+            
+            // Update the pet properties
+            petToUpdate.Name = pet.Name;
+            petToUpdate.TypeId = pet.TypeId;
+            petToUpdate.Species = pet.Species;
+            petToUpdate.Age = pet.Age;
+            petToUpdate.PetGender = pet.PetGender;
+            petToUpdate.Color = pet.Color;
+            petToUpdate.Breed = pet.Breed;
+            petToUpdate.Description = pet.Description;
+            petToUpdate.CreatedAt = pet.CreatedAt;
+            petToUpdate.Adoptions = pet.Adoptions;
+          
+
+            // Process each image in the list of newImages
+            foreach (var image in newImages)
+            {
+                if (image != null && image.Length > 0)
+                {
+                    using var memoryStream = new MemoryStream();
+                    await image.CopyToAsync(memoryStream);
+
+                    var img = new Image
+                    {
+                        FileName = image.FileName,
+                        ContentType = image.ContentType,
+                        Data = memoryStream.ToArray(),
+                        PetId = pet.Id // Set the PetId for the new image
+                    };
+
+                    petToUpdate.Images.Add(img);
+                }
+            }
+
+            await _service.UpdateAsync(id, petToUpdate);
             return RedirectToAction(nameof(Index));
         }
+
+
 
         [HttpGet]
         [Route("Delete/{id}")]
@@ -147,6 +188,20 @@ namespace AdoptSpot.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+        }
+       
+        [HttpGet]
+        [Route("Details/{id}")]
+        public async Task<IActionResult> Details(int id)
+        {
+            var pet = await _service.GetByIdAsync(id, include: p => p.Include(p => p.Images));
+
+            if (pet == null)
+            {
+                return View("NotFound");
+            }
+
+            return View(pet);
         }
 
 
