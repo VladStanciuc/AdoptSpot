@@ -1,0 +1,74 @@
+﻿@model Vaccination
+@{ int index = ViewBag.Index; }
+
+<div class="card mt-3">
+    <div class="card-body">
+        <h5 class="card-title">Vaccination @index</h5>
+        <input type="hidden" asp-for="@Model.Id" name="MedicalRecord.Vaccinations[@index].Id" />
+
+        <div class="form-group">
+            <label asp-for="@Model.Disease">Disease</label>
+            <input asp-for="@Model.Disease" name="MedicalRecord.Vaccinations[@index].Disease" class="form-control" readonly />
+        </div>
+
+        <button type="button" class="btn btn-primary" onclick="toggleDetails(@index)">Show more details</button>
+
+        <div id="details-@index" class="d-none">
+            <div class="form-group">
+                <label asp-for="@Model.DateAdministered">Date Administered</label>
+                <input asp-for="@Model.DateAdministered" name="MedicalRecord.Vaccinations[@index].DateAdministered" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.VeterinarianName">Veterinarian Name</label>
+                <input asp-for="@Model.VeterinarianName" name="MedicalRecord.Vaccinations[@index].VeterinarianName" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.ExpirationDate">Expiration Date</label>
+                <input asp-for="@Model.ExpirationDate" name="MedicalRecord.Vaccinations[@index].ExpirationDate" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.BatchNumber">Batch Number</label>
+                <input asp-for="@Model.BatchNumber" name="MedicalRecord.Vaccinations[@index].BatchNumber" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.Notes">Notes</label>
+                <textarea asp-for="@Model.Notes" name="MedicalRecord.Vaccinations[@index].Notes" class="form-control"></textarea>
+            </div>
+
+        </div>
+
+        <input type="hidden" asp-for="@Model.MedicalRecordId" name="MedicalRecord.Vaccinations[@index].MedicalRecordId" />
+    </div>
+</div>
+
+<!-- ... -->
+<button type="button" class="btn btn-primary" onclick="addVaccination()">Add Vaccination</button>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+
+}
+<script>
+    function toggleDetails(index) {
+        var details = document.getElementById("details-" + index);
+        if (details.classList.contains("d-none")) {
+            details.classList.remove("d-none");
+        } else {
+            details.classList.add("d-none");
+        }
+    }
+
+    function addVaccination() {
+        console.log("Adding a new vaccination...")
+        var vaccinesContainer = document.getElementById("vaccinesContainer");
+        var index = vaccinesContainer.children.length;
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "/Pets/_EditVaccination?index=" + index, true);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                vaccinesContainer.insertAdjacentHTML("beforeend", xhr.responseText);
+            }
+        };
+        xhr.send();
+    }
+</script>

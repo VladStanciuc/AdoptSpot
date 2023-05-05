@@ -10,14 +10,15 @@ namespace AdoptSpot.Data.Services
 {
     public class PetService : EntityBaseRepository<Pet>, IPetService
     {
-        
+       
+
 
         public PetService(AppDbContext context) : base(context)
         {
 
         }
-        
 
+      
 
     }
 }

@@ -12,7 +12,6 @@ namespace AdoptSpot.Models
     {
         public int Id { get; set; }
         public int MedicalRecordId { get; set; }
-        public int MedicalHistoryId { get; set; }
         public DateTime TreatmentDate { get; set; }
         public string TreatmentDescription { get; set; }
         public string PrescribingVeterinarian { get; set; }

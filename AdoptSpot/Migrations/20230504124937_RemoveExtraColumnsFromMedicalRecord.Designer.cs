@@ -4,14 +4,16 @@ using AdoptSpot.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AdoptSpot.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230504124937_RemoveExtraColumnsFromMedicalRecord")]
+    partial class RemoveExtraColumnsFromMedicalRecord
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -97,7 +99,7 @@ namespace AdoptSpot.Migrations
                     b.HasIndex("PetId")
                         .IsUnique();
 
-                    b.ToTable("MedicalRecord");
+                    b.ToTable("MedicalRecords");
                 });
 
             modelBuilder.Entity("AdoptSpot.Models.MedicalTreatment", b =>
@@ -269,7 +271,7 @@ namespace AdoptSpot.Migrations
 
                     b.HasIndex("MedicalRecordId");
 
-                    b.ToTable("Vaccinations");
+                    b.ToTable("Vaccination");
                 });
 
             modelBuilder.Entity("AdoptSpot.Models.Adoption", b =>

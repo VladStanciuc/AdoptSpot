@@ -39,7 +39,7 @@ namespace AdoptSpot.Controllers
 
         [HttpPost]
         [Route("Create")]
-        public async Task<IActionResult> Create([Bind("Name,TypeId,Species,Age,PetGender,Color,Breed,Description,CreatedAt,Adoptions,MedicalHistories,Images")] Pet pet, List<IFormFile> images)
+        public async Task<IActionResult> Create([Bind("Name,TypeId,Species,Age,PetGender,Color,Breed,Description,CreatedAt,Adoptions,MedicalRecord,Images")] Pet pet, List<IFormFile> images)
         {
             if (ModelState.IsValid)
             {
@@ -88,7 +88,8 @@ namespace AdoptSpot.Controllers
         [Route("Edit/{id}")]
         public async Task<IActionResult> Edit(int id)
         {
-            var petDetails = await _service.GetByIdAsync(id, include: p => p.Include(p => p.Images));
+            var petDetails = await _service.GetByIdAsync(id, include: p => p.Include(p => p.Images).Include(p => p.MedicalRecord).ThenInclude(p => p.Vaccinations));
+
 
             if (petDetails == null)
             {
@@ -102,7 +103,10 @@ namespace AdoptSpot.Controllers
         }
         [HttpPost]
         [Route("Edit/{id}")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,TypeId,Species,Age,PetGender,Color,Breed,Description,CreatedAt,Adoptions,MedicalHistories,Images")] Pet pet, List<IFormFile> newImages)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,TypeId,Species,Age,PetGender,Color,Breed,Description,CreatedAt,Adoptions,MedicalRecord,Images")] Pet pet, 
+            List<IFormFile> newImages, [Bind(Prefix = "MedicalRecord")] MedicalRecord updatedMedicalRecord, 
+            [Bind(Prefix = "MedicalRecord.MedicalTreatments")] ICollection<MedicalTreatment> updatedMedicalTreatments, 
+            [Bind(Prefix = "MedicalRecord.Vaccines")] ICollection<Vaccination> updatedVaccinations)
         {
             if (!ModelState.IsValid)
             {
@@ -110,7 +114,9 @@ namespace AdoptSpot.Controllers
             }
 
             // Retrieve the pet from the database
-            var petToUpdate = await _service.GetByIdAsync(id, include: p => p.Include(p => p.Images));
+            var petToUpdate = await _service.GetByIdAsync(id, include: p => p.Include(p => p.Images)
+                                                                             .Include(p =>p.MedicalRecord)
+                                                                             .ThenInclude(mr => mr.Vaccinations));
             if (petToUpdate == null)
             {
                 return NotFound();
@@ -127,7 +133,6 @@ namespace AdoptSpot.Controllers
             petToUpdate.Description = pet.Description;
             petToUpdate.CreatedAt = pet.CreatedAt;
             petToUpdate.Adoptions = pet.Adoptions;
-          
 
             // Process each image in the list of newImages
             foreach (var image in newImages)
@@ -147,6 +152,7 @@ namespace AdoptSpot.Controllers
 
                     petToUpdate.Images.Add(img);
                 }
+               
             }
 
             await _service.UpdateAsync(id, petToUpdate);
@@ -202,6 +208,17 @@ namespace AdoptSpot.Controllers
             }
 
             return View(pet);
+        }
+        public IActionResult RenderVaccine(int index)
+        {
+            ViewBag.Index = index;
+            return PartialView("_EditVaccination", new Vaccination());
+        }
+
+        public IActionResult _EditVaccination(int index)
+        {
+            ViewData["Index"] = index;
+            return PartialView("_EditVaccination", new Vaccination());
         }
 
 

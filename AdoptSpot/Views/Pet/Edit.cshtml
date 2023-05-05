@@ -28,42 +28,79 @@
             }
         </div>
     </div>
+    <!-- ... -->
 
-    <div class="form-group">
-        <label asp-for="Species"></label>
-        <input asp-for="Species" class="form-control" />
-        <span asp-validation-for="Species" class="text-danger"></span>
+    <div id="vaccinesContainer">
+        @if (Model.MedicalRecord != null)
+        {
+            int index = 0;
+            foreach (var vaccine in Model.MedicalRecord.Vaccinations)
+            {
+                ViewData["Index"] = index;
+                await Html.RenderPartialAsync("_EditVaccination", vaccine);
+                index++;
+            }
+        }
+        else
+        {
+            <p>No MedicalRecord found for this pet.</p>
+        }
     </div>
-    <div class="form-group">
-        <label asp-for="Age"></label>
-        <input asp-for="Age" class="form-control" />
-        <span asp-validation-for="Age" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="PetGender"></label>
-        <input asp-for="PetGender" class="form-control" />
-        <span asp-validation-for="PetGender" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Color"></label>
-        <input asp-for="Color" class="form-control" />
-        <span asp-validation-for="Color" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Breed"></label>
-        <input asp-for="Breed" class="form-control" />
-        <span asp-validation-for="Breed" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Description"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <button type="submit" class="btn btn-primary">Update</button>
-        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-    </div>
+
+  
+
+
+<!-- ... -->
+
+
+<div class="form-group">
+    <label asp-for="Species"></label>
+    <input asp-for="Species" class="form-control" />
+    <span asp-validation-for="Species" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="Age"></label>
+    <input asp-for="Age" class="form-control" />
+    <span asp-validation-for="Age" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="PetGender"></label>
+    <input asp-for="PetGender" class="form-control" />
+    <span asp-validation-for="PetGender" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="Color"></label>
+    <input asp-for="Color" class="form-control" />
+    <span asp-validation-for="Color" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="Breed"></label>
+    <input asp-for="Breed" class="form-control" />
+    <span asp-validation-for="Breed" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="Description"></label>
+    <textarea asp-for="Description" class="form-control"></textarea>
+    <span asp-validation-for="Description" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <button type="submit" class="btn btn-primary">Update</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</div>
 </form>
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+
+    <script>
+        function toggleDetails(index) {
+            var details = document.getElementById("details-" + index);
+            if (details.classList.contains("d-none")) {
+                details.classList.remove("d-none");
+            } else {
+                details.classList.add("d-none");
+            }
+        }
+    </script>
 }
+
+

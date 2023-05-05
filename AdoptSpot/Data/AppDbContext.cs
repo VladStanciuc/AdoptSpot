@@ -17,9 +17,9 @@ namespace AdoptSpot.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Pet> Pets { get; set; }
         public DbSet<Adoption> Adoptions { get; set; }
-        public DbSet<MedicalRecord> MedicalRecords { get; set; }
+        public DbSet<MedicalRecord> MedicalRecord { get; set; }
         public DbSet<Image> Images { get; set; }
-        public DbSet<Vaccination> Vaccination { get; set; }
+        public DbSet<Vaccination> Vaccinations { get; set; }
         public DbSet<MedicalTreatment> MedicalTreatments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -53,7 +53,7 @@ namespace AdoptSpot.Data
 
             modelBuilder.Entity<Vaccination>()
                     .HasOne(v => v.MedicalRecord)
-                    .WithMany(mr => mr.Vaccines)
+                    .WithMany(mr => mr.Vaccinations)
                     .HasForeignKey(v => v.MedicalRecordId);
 
         }
