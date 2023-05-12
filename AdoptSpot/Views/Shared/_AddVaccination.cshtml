@@ -1,0 +1,46 @@
+﻿@model Vaccination
+@{ int index = ViewBag.Index ?? 0;
+    var vaccinationsList = Model.MedicalRecord.Vaccinations.ToList();
+}
+
+<div class="card mt-3">
+    <div class="card-body">
+        <h5 class="card-title">New Vaccination</h5>
+
+        <div class="form-group">
+            <label asp-for="@Model.Disease">Disease</label>
+            <input asp-for="@Model.Disease" name="MedicalRecord.Vaccinations[@index].Disease" class="form-control" />
+        </div>
+
+        <button type="button" class="btn btn-primary show-more-details-btn" data-index="@index">Show more details</button>
+
+
+        <div id="details-@index" class="d-none">
+            <div class="form-group">
+                <label asp-for="vaccinationsList[@index].DateAdministered">Date Administered</label>
+                <input name="MedicalRecord.Vaccines[@index].DateAdministered" value="@vaccinationsList[@index].DateAdministered.ToString("yyyy-MM-dd")" type="date" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.VeterinarianName">Veterinarian Name</label>
+                <input asp-for="@Model.VeterinarianName" name="MedicalRecord.Vaccinations[@index].VeterinarianName" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="vaccinationsList[@index].ExpirationDate">Expiration Date</label>
+                <input name="MedicalRecord.Vaccines[@index].ExpirationDate" value="@vaccinationsList[@index].ExpirationDate.ToString("yyyy-MM-dd")" type="date" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.BatchNumber">Batch Number</label>
+                <input asp-for="@Model.BatchNumber" name="MedicalRecord.Vaccinations[@index].BatchNumber" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.Notes">Notes</label>
+                <textarea asp-for="@Model.Notes" name="MedicalRecord.Vaccinations[@index].Notes" class="form-control"></textarea>
+            </div>
+
+        </div>
+
+        <input type="hidden" asp-for="@Model.MedicalRecordId" name="MedicalRecord.Vaccinations[@index].MedicalRecordId" />
+    </div>
+</div>
+
+

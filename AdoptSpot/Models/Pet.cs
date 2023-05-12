@@ -31,6 +31,8 @@ namespace AdoptSpot.Models
         public Pet()
         {
             Images = new List<Image>();
+            MedicalRecord = new MedicalRecord();
         }
+       
     }
 }

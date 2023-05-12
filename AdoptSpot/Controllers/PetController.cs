@@ -1,5 +1,4 @@
-﻿using AdoptSpot.Data;
-using AdoptSpot.Data.Services;
+﻿using AdoptSpot.Data.Services;
 using AdoptSpot.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,9 +8,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-
 namespace AdoptSpot.Controllers
-{
+    {
+
     [Route("Pets")]
     public class PetController : Controller
     {
@@ -107,13 +106,11 @@ namespace AdoptSpot.Controllers
             List<IFormFile> newImages, [Bind(Prefix = "MedicalRecord")] MedicalRecord updatedMedicalRecord, 
             [Bind(Prefix = "MedicalRecord.MedicalTreatments")] ICollection<MedicalTreatment> updatedMedicalTreatments, 
             [Bind(Prefix = "MedicalRecord.Vaccines")] ICollection<Vaccination> updatedVaccinations)
+           
         {
-            if (!ModelState.IsValid)
-            {
-                return View(pet);
-            }
+            var errors = ModelState.Where(x => x.Value.Errors.Count > 0).Select(x => new { x.Key, x.Value.Errors }).ToArray();
 
-            // Retrieve the pet from the database
+           
             var petToUpdate = await _service.GetByIdAsync(id, include: p => p.Include(p => p.Images)
                                                                              .Include(p =>p.MedicalRecord)
                                                                              .ThenInclude(mr => mr.Vaccinations));
@@ -121,42 +118,40 @@ namespace AdoptSpot.Controllers
             {
                 return NotFound();
             }
+           await  _service.UploadImages(petToUpdate, newImages);
             
-            // Update the pet properties
-            petToUpdate.Name = pet.Name;
-            petToUpdate.TypeId = pet.TypeId;
-            petToUpdate.Species = pet.Species;
-            petToUpdate.Age = pet.Age;
-            petToUpdate.PetGender = pet.PetGender;
-            petToUpdate.Color = pet.Color;
-            petToUpdate.Breed = pet.Breed;
-            petToUpdate.Description = pet.Description;
-            petToUpdate.CreatedAt = pet.CreatedAt;
-            petToUpdate.Adoptions = pet.Adoptions;
-
-            // Process each image in the list of newImages
-            foreach (var image in newImages)
+            foreach (var updatedVaccination in updatedVaccinations)
             {
-                if (image != null && image.Length > 0)
+                var existingVaccination = petToUpdate.MedicalRecord.Vaccinations.FirstOrDefault(v => v.Id == updatedVaccination.Id);
+
+                if (existingVaccination != null)
                 {
-                    using var memoryStream = new MemoryStream();
-                    await image.CopyToAsync(memoryStream);
-
-                    var img = new Image
-                    {
-                        FileName = image.FileName,
-                        ContentType = image.ContentType,
-                        Data = memoryStream.ToArray(),
-                        PetId = pet.Id // Set the PetId for the new image
-                    };
-
-                    petToUpdate.Images.Add(img);
+                    existingVaccination.Disease = updatedVaccination.Disease;
+                    existingVaccination.DateAdministered = updatedVaccination.DateAdministered;
+                    existingVaccination.VeterinarianName = updatedVaccination.VeterinarianName;
+                    existingVaccination.ExpirationDate = updatedVaccination.ExpirationDate;
+                    existingVaccination.BatchNumber = updatedVaccination.BatchNumber;
+                    existingVaccination.Notes = updatedVaccination.Notes;
                 }
-               
             }
 
             await _service.UpdateAsync(id, petToUpdate);
             return RedirectToAction(nameof(Index));
+        }
+     
+        [HttpDelete]
+        [Route("EditVaccinationDelete/{vaccineId}")]
+        public async Task<IActionResult> DeleteVaccination( int vaccineId)
+        {
+            var result = await _service.DeleteVaccinationAsync(vaccineId);
+            if (result)
+            {
+                return Json(new { success = true });
+            }
+            else
+            {
+                return Json(new { success = false });
+            }
         }
 
 
@@ -209,17 +204,36 @@ namespace AdoptSpot.Controllers
 
             return View(pet);
         }
-        public IActionResult RenderVaccine(int index)
+       
+        [HttpPost]
+        [Route("EditVaccination/{petId}")]
+        public async Task<IActionResult> AddVaccinationAsync(int petId, [FromBody] Vaccination vaccination)
         {
-            ViewBag.Index = index;
-            return PartialView("_EditVaccination", new Vaccination());
-        }
+            try
+            {
+                var petToUpdate = await _service.GetByIdAsync(petId, include: p => p.Include(p => p.MedicalRecord));
+                if (petToUpdate == null)
+                {
+                    return NotFound();
+                }
 
-        public IActionResult _EditVaccination(int index)
+                await _service.AddVaccinationAsync(petToUpdate, vaccination);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // Log the exception here, e.g., using a logger or writing to a file.
+                return StatusCode(500, "An error occurred while adding the vaccination.");
+            }
+        }
+        [HttpGet]
+        [Route("Pets/AddVaccinationAsync")]
+        public IActionResult _AddVaccination(int index)
         {
             ViewData["Index"] = index;
-            return PartialView("_EditVaccination", new Vaccination());
+            return PartialView("_AddVaccination", new Vaccination());
         }
+
 
 
     }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AdoptSpot.Data.Services
 {
-    public interface IPetService:IEntityBaseRepository<Pet>
+    public interface IVaccinationService : IEntityBaseRepository<Vaccination>
     {
     }
 }
