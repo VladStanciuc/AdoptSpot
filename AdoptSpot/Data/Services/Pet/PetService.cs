@@ -120,6 +120,26 @@ namespace AdoptSpot.Data.Services
                 }
             }
         }
+        public async Task DeleteImagesAsync(Pet petToUpdate, [FromBody] int[] imageIds)
+        {
+            var imagesToDelete = petToUpdate.Images.Where(i => imageIds.Contains(i.Id)).ToList();
+
+            if (imagesToDelete.Count > 0)
+            {
+                foreach (var image in imagesToDelete)
+                {
+                    petToUpdate.Images.Remove(image);
+                }
+
+                // Assuming _context is your DbContext
+                _context.Pets.Update(petToUpdate);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new Exception("No images found with the provided ids");
+            }
+        }
 
 
     }

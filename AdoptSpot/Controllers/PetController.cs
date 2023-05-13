@@ -124,10 +124,29 @@ namespace AdoptSpot.Controllers
             await _service.UpdateAsync(id, petToUpdate);
             return RedirectToAction(nameof(Index));
         }
-     
-        
 
+        [HttpDelete]
+        [Route("DeleteImages/{petId}")]
+        public async Task<IActionResult> DeleteImages(int petId, [FromBody] int[] imageIds)
+        {
+            var pet = await _service.GetByIdAsync(petId, include: p => p.Include(p => p.Images));
 
+            if (pet == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                await _service.DeleteImagesAsync(pet, imageIds);
+                return Json(new { success = true });
+            }
+            catch (Exception)
+            {
+                // You could return a more specific status code depending on the exception
+                return NotFound();
+            }
+        }
 
         [HttpGet]
         [Route("Delete/{id}")]
@@ -183,8 +202,6 @@ namespace AdoptSpot.Controllers
         [Route("EditVaccination/{petId}")]
         public async Task<IActionResult> AddVaccinationAsync(int petId, [FromBody] Vaccination vaccination)
         {
-            try
-            {
                 var petToUpdate = await _service.GetByIdAsync(petId, include: p => p.Include(p => p.MedicalRecord));
                 if (petToUpdate == null)
                 {
@@ -193,12 +210,6 @@ namespace AdoptSpot.Controllers
 
                 await _service.AddVaccinationAsync(petToUpdate, vaccination);
                 return Ok();
-            }
-            catch (Exception ex)
-            {
-                // Log the exception here, e.g., using a logger or writing to a file.
-                return StatusCode(500, "An error occurred while adding the vaccination.");
-            }
         }
 
         [HttpDelete]
