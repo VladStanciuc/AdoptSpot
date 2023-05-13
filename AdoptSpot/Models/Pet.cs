@@ -25,12 +25,12 @@ namespace AdoptSpot.Models
         // public DateTime UpdatedAt { get; set; }
         public ICollection<Adoption> Adoptions { get; set; }
         public MedicalRecord MedicalRecord { get; set; }
-        public ICollection<Image> Images { get; set; }
+        public ICollection<ImageModel> Images { get; set; }
 
         //Relationships
         public Pet()
         {
-            Images = new List<Image>();
+            Images = new List<ImageModel>();
             MedicalRecord = new MedicalRecord();
         }
        

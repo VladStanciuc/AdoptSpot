@@ -23,9 +23,9 @@
         <div class="row">
             @foreach (var image in Model.Images)
             {
-                <div class="col-md-4">
-                    <img src="@Url.Action("GetImage", "Image", new { id = image.Id })" class="img-fluid" alt="Image @image.Id" />
-                </div>
+            <div class="col-md-4">
+                <img src="@Url.Action("GetImage", "Image", new { id = image.Id })" class="img-fluid" alt="Image @image.Id" />
+            </div>
             }
         </div>
     </div>
@@ -86,7 +86,7 @@
     <!-- ... -->
 
     <div class="form-group">
-        <button type="button" class="btn btn-primary" onclick="submitFormWithAddedVaccinations(@Model.Id)">Update</button>
+        <button type="button" class="btn btn-primary" onclick="submitFormWithAddedVaccinations(@Model.Id)">Update Vaccinations</button>
 
 
 
@@ -136,6 +136,8 @@
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 
 <script>
+
+
 
     function addVaccination(vaccinationsTableBody) {
 

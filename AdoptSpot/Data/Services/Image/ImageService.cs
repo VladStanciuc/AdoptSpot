@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AdoptSpot.Data.Services
 {
-    public class ImageService:EntityBaseRepository<Image>, IImageService
+    public class ImageService:EntityBaseRepository<ImageModel>, IImageService
     {
         public ImageService(AppDbContext context) : base(context)
         {

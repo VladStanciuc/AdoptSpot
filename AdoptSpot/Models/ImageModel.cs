@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace AdoptSpot.Models
 {
     [Table("Image")]
-    public class Image : IEntityBase
+    public class ImageModel : IEntityBase
     {
         [Key]
         public int Id { get; set; }

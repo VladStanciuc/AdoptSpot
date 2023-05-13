@@ -44,7 +44,7 @@ namespace AdoptSpot.Controllers
                 using var memoryStream = new MemoryStream();
                 await image.CopyToAsync(memoryStream);
 
-                var img = new Image
+                var img = new ImageModel
                 {
                     FileName = image.FileName,
                     ContentType = image.ContentType,
@@ -89,7 +89,7 @@ namespace AdoptSpot.Controllers
                 using var memoryStream = new MemoryStream();
                 await image.CopyToAsync(memoryStream);
 
-                var img = new Image
+                var img = new ImageModel
                 {
                     Id = id,
                     FileName = image.FileName,

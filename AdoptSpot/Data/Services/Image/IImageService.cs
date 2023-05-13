@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AdoptSpot.Data.Services
 {
-    public interface IImageService : IEntityBaseRepository<Image>
+    public interface IImageService : IEntityBaseRepository<ImageModel>
     {
     }
 }

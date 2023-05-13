@@ -18,7 +18,7 @@ namespace AdoptSpot.Data
         public DbSet<Pet> Pets { get; set; }
         public DbSet<Adoption> Adoptions { get; set; }
         public DbSet<MedicalRecord> MedicalRecord { get; set; }
-        public DbSet<Image> Images { get; set; }
+        public DbSet<ImageModel> Images { get; set; }
         public DbSet<Vaccination> Vaccinations { get; set; }
         public DbSet<MedicalTreatment> MedicalTreatments { get; set; }
 
@@ -41,7 +41,7 @@ namespace AdoptSpot.Data
                 .WithOne(p => p.MedicalRecord)
                 .HasForeignKey<MedicalRecord>(mr => mr.PetId);
 
-            modelBuilder.Entity<Image>()
+            modelBuilder.Entity<ImageModel>()
                 .HasOne(mh => mh.Pet)
                 .WithMany(p => p.Images)
                 .HasForeignKey(mh => mh.PetId);

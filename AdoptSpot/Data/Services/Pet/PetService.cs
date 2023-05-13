@@ -9,19 +9,27 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+
+
+
+
 
 namespace AdoptSpot.Data.Services
 {
     public class PetService : EntityBaseRepository<Pet>, IPetService
     {
         private readonly IVaccinationService _vaccinationService;
-       
+        private readonly AppDbContext _context;
+
         public PetService(AppDbContext context, IVaccinationService vaccinationService) : base(context)
         {
             _vaccinationService = vaccinationService;
+            _context = context;
         }
 
-       public async Task AddVaccinationAsync(Pet petToUpdate, Vaccination vaccination)
+        public async Task AddVaccinationAsync(Pet petToUpdate, Vaccination vaccination)
         {
             if (petToUpdate?.MedicalRecord == null)
             {
@@ -41,11 +49,11 @@ namespace AdoptSpot.Data.Services
                 await this.UpdateAsync(petToUpdate.Id, petToUpdate);
             }
         }
-        public async Task<bool> DeleteVaccinationAsync( int vaccineId)
+        public async Task<bool> DeleteVaccinationAsync(int vaccineId)
         {
 
             var vaccineToDelete = await _vaccinationService.GetByIdAsync(vaccineId);
-          
+
             if (vaccineToDelete != null)
             {
                 await _vaccinationService.DeleteAsync(vaccineToDelete.Id);
@@ -57,8 +65,33 @@ namespace AdoptSpot.Data.Services
             }
         }
 
+        public async Task UpdateExistingVaccinationsAsync(Pet petToUpdate, [Bind(Prefix = "MedicalRecord.Vaccines")] ICollection<Vaccination> updatedVaccinations)
+        {
+            if (petToUpdate == null)
+            {
+                throw new ArgumentException("Invalid pet");
+            }
 
-        public async  Task UploadImages(Pet petToUpdate, List<IFormFile> newImages)
+            foreach (var updatedVaccination in updatedVaccinations)
+            {
+                var existingVaccination = petToUpdate.MedicalRecord.Vaccinations.FirstOrDefault(v => v.Id == updatedVaccination.Id);
+
+                if (existingVaccination != null)
+                {
+                    existingVaccination.Disease = updatedVaccination.Disease;
+                    existingVaccination.DateAdministered = updatedVaccination.DateAdministered;
+                    existingVaccination.VeterinarianName = updatedVaccination.VeterinarianName;
+                    existingVaccination.ExpirationDate = updatedVaccination.ExpirationDate;
+                    existingVaccination.BatchNumber = updatedVaccination.BatchNumber;
+                    existingVaccination.Notes = updatedVaccination.Notes;
+                    
+                }
+            }
+            await _context.SaveChangesAsync();
+
+        }
+
+        public async Task UploadImages(Pet petToUpdate, List<IFormFile> newImages)
         {
             foreach (var image in newImages)
             {
@@ -66,8 +99,16 @@ namespace AdoptSpot.Data.Services
                 {
                     using var memoryStream = new MemoryStream();
                     await image.CopyToAsync(memoryStream);
-
-                    var img = new Image
+                    using var imageSharp = Image.Load(memoryStream.ToArray());
+                    imageSharp.Mutate(x => x.Resize(new ResizeOptions
+                    {
+                        Mode = ResizeMode.Max,
+                        Size = new Size(500, 500)
+                    }));
+                    using var resultStream = new MemoryStream();
+                    await imageSharp.SaveAsJpegAsync(resultStream);
+                    var resizedImageBytes = resultStream.ToArray();
+                    var img = new ImageModel
                     {
                         FileName = image.FileName,
                         ContentType = image.ContentType,
@@ -80,6 +121,6 @@ namespace AdoptSpot.Data.Services
             }
         }
 
-       
+
     }
 }

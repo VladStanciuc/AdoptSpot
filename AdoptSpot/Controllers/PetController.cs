@@ -47,7 +47,7 @@ namespace AdoptSpot.Controllers
                     // Check if the pet.Images property is null
                     if (pet.Images == null)
                     {
-                        pet.Images = new List<Image>();
+                        pet.Images = new List<ImageModel>();
                     }
 
                     // Process each image in the list
@@ -58,7 +58,7 @@ namespace AdoptSpot.Controllers
                             using var memoryStream = new MemoryStream();
                             await image.CopyToAsync(memoryStream);
 
-                            var img = new Image
+                            var img = new ImageModel
                             {
                                 FileName = image.FileName,
                                 ContentType = image.ContentType,
@@ -104,9 +104,8 @@ namespace AdoptSpot.Controllers
         [Route("Edit/{id}")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,TypeId,Species,Age,PetGender,Color,Breed,Description,CreatedAt,Adoptions,MedicalRecord,Images")] Pet pet, 
             List<IFormFile> newImages, [Bind(Prefix = "MedicalRecord")] MedicalRecord updatedMedicalRecord, 
-            [Bind(Prefix = "MedicalRecord.MedicalTreatments")] ICollection<MedicalTreatment> updatedMedicalTreatments, 
-            [Bind(Prefix = "MedicalRecord.Vaccines")] ICollection<Vaccination> updatedVaccinations)
-           
+            [Bind(Prefix = "MedicalRecord.MedicalTreatments")] ICollection<MedicalTreatment> updatedMedicalTreatments,
+             [Bind(Prefix = "MedicalRecord.Vaccines")] ICollection<Vaccination> updatedVaccinations)
         {
             var errors = ModelState.Where(x => x.Value.Errors.Count > 0).Select(x => new { x.Key, x.Value.Errors }).ToArray();
 
@@ -118,41 +117,15 @@ namespace AdoptSpot.Controllers
             {
                 return NotFound();
             }
-           await  _service.UploadImages(petToUpdate, newImages);
-            
-            foreach (var updatedVaccination in updatedVaccinations)
-            {
-                var existingVaccination = petToUpdate.MedicalRecord.Vaccinations.FirstOrDefault(v => v.Id == updatedVaccination.Id);
+            await  _service.UploadImages(petToUpdate, newImages);
 
-                if (existingVaccination != null)
-                {
-                    existingVaccination.Disease = updatedVaccination.Disease;
-                    existingVaccination.DateAdministered = updatedVaccination.DateAdministered;
-                    existingVaccination.VeterinarianName = updatedVaccination.VeterinarianName;
-                    existingVaccination.ExpirationDate = updatedVaccination.ExpirationDate;
-                    existingVaccination.BatchNumber = updatedVaccination.BatchNumber;
-                    existingVaccination.Notes = updatedVaccination.Notes;
-                }
-            }
+            await _service.UpdateExistingVaccinationsAsync(petToUpdate, updatedVaccinations);
 
             await _service.UpdateAsync(id, petToUpdate);
             return RedirectToAction(nameof(Index));
         }
      
-        [HttpDelete]
-        [Route("EditVaccinationDelete/{vaccineId}")]
-        public async Task<IActionResult> DeleteVaccination( int vaccineId)
-        {
-            var result = await _service.DeleteVaccinationAsync(vaccineId);
-            if (result)
-            {
-                return Json(new { success = true });
-            }
-            else
-            {
-                return Json(new { success = false });
-            }
-        }
+        
 
 
 
@@ -204,7 +177,8 @@ namespace AdoptSpot.Controllers
 
             return View(pet);
         }
-       
+      
+
         [HttpPost]
         [Route("EditVaccination/{petId}")]
         public async Task<IActionResult> AddVaccinationAsync(int petId, [FromBody] Vaccination vaccination)
@@ -226,6 +200,22 @@ namespace AdoptSpot.Controllers
                 return StatusCode(500, "An error occurred while adding the vaccination.");
             }
         }
+
+        [HttpDelete]
+        [Route("EditVaccinationDelete/{vaccineId}")]
+        public async Task<IActionResult> DeleteVaccination(int vaccineId)
+        {
+            var result = await _service.DeleteVaccinationAsync(vaccineId);
+            if (result)
+            {
+                return Json(new { success = true });
+            }
+            else
+            {
+                return Json(new { success = false });
+            }
+        }
+
         [HttpGet]
         [Route("Pets/AddVaccinationAsync")]
         public IActionResult _AddVaccination(int index)
