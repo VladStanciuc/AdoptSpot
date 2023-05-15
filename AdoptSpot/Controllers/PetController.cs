@@ -117,6 +117,14 @@ namespace AdoptSpot.Controllers
             {
                 return NotFound();
             }
+            petToUpdate.Name = pet.Name;
+            petToUpdate.Species = pet.Species;
+            petToUpdate.Age = pet.Age;
+            petToUpdate.PetGender = pet.PetGender;
+            petToUpdate.Color = pet.Color;
+            petToUpdate.Breed = pet.Breed;
+            petToUpdate.Description = pet.Description;
+            petToUpdate.CreatedAt = pet.CreatedAt;
             await  _service.UploadImages(petToUpdate, newImages);
 
             await _service.UpdateExistingVaccinationsAsync(petToUpdate, updatedVaccinations);

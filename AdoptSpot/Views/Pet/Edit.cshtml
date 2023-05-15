@@ -99,7 +99,7 @@
     <!-- ... -->
 
     <div class="form-group">
-        <button type="button" class="btn btn-primary" onclick="submitFormWithAddedVaccinations(@Model.Id)">Update Vaccinations</button>
+        <button type="button" class="btn btn-primary" onclick="submitFormWithAddedVaccinations(event, @Model.Id)">Update Vaccinations</button>
 
 
 
@@ -153,7 +153,9 @@
     <script>
 
         $(document).ready(function () {
-            $('#delete-images-button').click(function () {
+            $('#delete-images-button').click(function (event) {
+                event.preventDefault();
+
                 var imageIds = $('.image-checkbox:checked').map(function () {
                     return $(this).val();
                 }).get();
@@ -283,42 +285,57 @@
     }
     }
 
+        async function submitFormWithAddedVaccinations(event, petId) {
+            event.preventDefault();
+            const addedVaccinations = document.querySelectorAll('tr[data-id="new"]');
+            const form = document.getElementById('editForm');
 
-    async function submitFormWithAddedVaccinations(petId) {
-    const addedVaccinations = document.querySelectorAll('tr[data-id="new"]');
+            for (const vaccinationRow of addedVaccinations) {
+                const vaccination = {
+                    Disease: vaccinationRow.querySelector('input[name*="Disease"]').value,
+                    DateAdministered: vaccinationRow.querySelector('input[name*="DateAdministered"]').value,
+                    VeterinarianName: vaccinationRow.querySelector('input[name*="VeterinarianName"]').value,
+                    ExpirationDate: vaccinationRow.querySelector('input[name*="ExpirationDate"]').value,
+                    BatchNumber: vaccinationRow.querySelector('input[name*="BatchNumber"]').value,
+                    Notes: vaccinationRow.querySelector('input[name*="Notes"]').value
+                };
 
+                console.log(JSON.stringify(vaccination));
 
-    for (const vaccinationRow of addedVaccinations) {
-    const vaccination = {
-    Disease: vaccinationRow.querySelector('input[name*="Disease"]').value,
-    DateAdministered: vaccinationRow.querySelector('input[name*="DateAdministered"]').value,
-    VeterinarianName: vaccinationRow.querySelector('input[name*="VeterinarianName"]').value,
-    ExpirationDate: vaccinationRow.querySelector('input[name*="ExpirationDate"]').value,
-    BatchNumber: vaccinationRow.querySelector('input[name*="BatchNumber"]').value,
-    Notes: vaccinationRow.querySelector('input[name*="Notes"]').value
-    };
-    console.log(JSON.stringify(vaccination));
-    /**/
-    const response = await fetch(`/Pets/EditVaccination/${petId}`, {
-    /**/
-    method: 'POST',
-    headers: {
-    'Content-Type': 'application/json',
-    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-    },
-    body: JSON.stringify(vaccination)
-    });
+                const response = await fetch(`/Pets/EditVaccination/${petId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify(vaccination)
+                });
 
-    if (!response.ok) {
-    console.error('Error adding vaccination', response);
-    return;
-    }
-    }
+                if (!response.ok) {
+                    console.error('Error adding vaccination', response);
+                    return;
+                }
+            }
 
-    document.getElementById('editForm').submit();
-    }
+            // Create a FormData object from the form
+            let formData = new FormData(form);
 
+            // Perform an AJAX request to send the form data to the server
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData,
+            });
 
+            if (!response.ok) {
+                console.error('Error submitting form', response);
+            } else {
+                console.log('Form submitted successfully');
+                // refresh the page
+                window.location.reload();
+            }
+        }
+
+       
 
 
     </script>
