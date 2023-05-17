@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 namespace AdoptSpot.Controllers
     {
@@ -87,7 +89,11 @@ namespace AdoptSpot.Controllers
         [Route("Edit/{id}")]
         public async Task<IActionResult> Edit(int id)
         {
-            var petDetails = await _service.GetByIdAsync(id, include: p => p.Include(p => p.Images).Include(p => p.MedicalRecord).ThenInclude(p => p.Vaccinations));
+            var petDetails = await _service.GetByIdAsync(id, include: p => p.Include(p => p.Images)
+                                                                   .Include(p => p.MedicalRecord)
+                                                                      .ThenInclude(mr => mr.Vaccinations)
+                                                                   .Include(p => p.MedicalRecord)
+                                                                      .ThenInclude(mr => mr.MedicalTreatments));
 
 
             if (petDetails == null)
@@ -109,10 +115,12 @@ namespace AdoptSpot.Controllers
         {
             var errors = ModelState.Where(x => x.Value.Errors.Count > 0).Select(x => new { x.Key, x.Value.Errors }).ToArray();
 
-           
             var petToUpdate = await _service.GetByIdAsync(id, include: p => p.Include(p => p.Images)
-                                                                             .Include(p =>p.MedicalRecord)
-                                                                             .ThenInclude(mr => mr.Vaccinations));
+                                                                   .Include(p => p.MedicalRecord)
+                                                                      .ThenInclude(mr => mr.Vaccinations)
+                                                                   .Include(p => p.MedicalRecord)
+                                                                      .ThenInclude(mr => mr.MedicalTreatments));
+
             if (petToUpdate == null)
             {
                 return NotFound();
@@ -126,11 +134,54 @@ namespace AdoptSpot.Controllers
             petToUpdate.Description = pet.Description;
             petToUpdate.CreatedAt = pet.CreatedAt;
             await  _service.UploadImages(petToUpdate, newImages);
-
+           
             await _service.UpdateExistingVaccinationsAsync(petToUpdate, updatedVaccinations);
-
+          
             await _service.UpdateAsync(id, petToUpdate);
-            return RedirectToAction(nameof(Index));
+
+            return View(petToUpdate);
+        }
+      
+
+        [HttpPost]
+        [Route("AddMedicalTreatment/{petId}")]
+        public async Task<IActionResult> AddMedicalTreatment(int petId, [FromBody] MedicalTreatment medicalTreatment)
+        {
+            var petToUpdate = await _service.GetByIdAsync(petId, include: p => p.Include(p => p.MedicalRecord).ThenInclude(mt => mt.MedicalTreatments));
+            if (petToUpdate == null)
+            {
+                return NotFound();
+            }
+
+            await _service.AddMedicalTreatmentAsync(petToUpdate, medicalTreatment);
+            return Ok();
+        }
+        [HttpPost]
+        [Route("UpdateMedicalTreatment/{petId}")]
+        public async Task<IActionResult> UpdateMedicalTreatment(int petId, ICollection<MedicalTreatment> medicalTreatment)
+        {
+            var petToUpdate = await _service.GetByIdAsync(petId, include: p => p.Include(p => p.MedicalRecord).ThenInclude(mt => mt.MedicalTreatments));
+            if (petToUpdate == null)
+            {
+                return NotFound();
+            }
+
+            await _service.UpdateExistingMedicalTreatments(petToUpdate, medicalTreatment);
+            return Ok();
+        }
+        [HttpDelete]
+        [Route("DeleteMedicalTreatment/{petId}")]
+        public async Task<IActionResult> DeleteMedicalTreatment(int medicalTreatmentId)
+        {
+            var result = await _service.DeleteMedicalTreatmentAsync(medicalTreatmentId);
+            if (result)
+            {
+                return Json(new { success = true });
+            }
+            else
+            {
+                return Json(new { success = false });
+            }
         }
 
         [HttpDelete]
@@ -195,8 +246,11 @@ namespace AdoptSpot.Controllers
         [Route("Details/{id}")]
         public async Task<IActionResult> Details(int id)
         {
-            var pet = await _service.GetByIdAsync(id, include: p => p.Include(p => p.Images));
-
+            var pet = await _service.GetByIdAsync(id, include: p => p.Include(p => p.Images)
+                                                                   .Include(p => p.MedicalRecord)
+                                                                      .ThenInclude(mr => mr.Vaccinations)
+                                                                   .Include(p => p.MedicalRecord)
+                                                                      .ThenInclude(mr => mr.MedicalTreatments));
             if (pet == null)
             {
                 return View("NotFound");

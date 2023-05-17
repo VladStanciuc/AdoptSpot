@@ -2,16 +2,18 @@
 
 @{
     ViewData["Title"] = "Edit Pet";
+    var petId = Model.Id;
 }
+<input type="hidden" id="petId" value="@petId" />
 
 <h2>@ViewData["Title"]</h2>
 
 <head>
-    @section Scripts {
-        @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="~/Scripts/EditViewScript.js"></script>
-    }
+    <style>
+        .scrollable-table {
+            overflow-x: auto;
+        }
+    </style>
 
 </head>
 <form asp-action="Edit" enctype="multipart/form-data" method="post" id="editForm">
@@ -65,7 +67,7 @@
             </tr>
         </thead>
         <tbody id="vaccinationsTableBody">
-            @if (Model.MedicalRecord.MedicalTreatments.Any() || Model.MedicalRecord.Vaccinations.Any())
+            @if (Model.MedicalRecord.Vaccinations.Any())
             {
                 int index = 0;
                 foreach (var vaccine in Model.MedicalRecord.Vaccinations)
@@ -86,25 +88,7 @@
                     </tr>
                     index++;
                 }
-                int indexMedicalTreatment = 0;
-                foreach (var vaccine in Model.MedicalRecord.MedicalTreatments)
-                {
 
-                    <tr data-id="@vaccine.Id">
-                        <td><input name="MedicalRecord.Vaccines[@indexMedicalTreatment].Disease" value="@vaccine.Disease" class="form-control" readonly /></td>
-                        <td><input type="date" id="dateAdministered_@indexMedicalTreatment" name="MedicalRecord.Vaccines[@index].DateAdministered" value="@vaccine.DateAdministered.ToString("yyyy-MM-dd")" class="form-control" readonly onblur="checkDates('@index')" /></td>
-                        <td><input name="MedicalRecord.Vaccines[@index].VeterinarianName" value="@vaccine.VeterinarianName" class="form-control" readonly /></td>
-                        <td><input type="date" id="expirationDate_@index" name="MedicalRecord.Vaccines[@index].ExpirationDate" value="@vaccine.ExpirationDate.ToString("yyyy-MM-dd")" class="form-control" readonly onblur="checkDates('@index')" /></td>
-                        <td><input name="MedicalRecord.Vaccines[@index].BatchNumber" value="@vaccine.BatchNumber" class="form-control" readonly /></td>
-                        <td><input name="MedicalRecord.Vaccines[@index].Notes" value="@vaccine.Notes" class="form-control" readonly /></td>
-                        <td><input name="MedicalRecord.Vaccines[@index].Id" type="hidden" value="@vaccine.Id" /></td>
-                        <td>
-                            <a href="#" class="btn btn-secondary btn-sm" onclick="toggleReadOnly('@(vaccine.Id)'); return false;">Edit</a>
-                            <a href="#" class="btn btn-danger btn-sm" onclick="deleteVaccination( @(vaccine.Id)); return false;">Delete</a>
-                        </td>
-                    </tr>
-                    index++;
-                }
             }
             else
             {
@@ -125,53 +109,119 @@
     <!-- ... -->
 
     <div class="form-group">
-        <button type="button" class="btn btn-primary" onclick="submitFormWithAddedVaccinations(event, @Model.Id)">Update Vaccinations</button>
+        <button type="button" class="btn btn-primary" onclick="submitFormWithAddedVaccinations(@Model.Id)">Update Vaccinations</button>
 
 
 
         <a asp-action="Index" class="btn btn-secondary">Cancel</a>
     </div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Treatment Date</th>
+                    <th>Treatment Description</th>
+                    <th>Prescribing Veterinarian</th>
+                    <th>Cost</th>
+                    <th>Diagnosis</th>
+                    <th>Medication</th>
+                    <th>Dosage</th>
+                    <th>Dosage Unit</th>
+                    <th>Frequency</th>
+                    <th>Frequency Unit</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Notes</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="medicalTreatmentTableBody">
+                @if (Model.MedicalRecord.MedicalTreatments.Count > 0)
+                {
+                    int indexMedTreatment = 0;
+                    foreach (var treatment in Model.MedicalRecord.MedicalTreatments)
+                    {
+                        <tr data-id="@treatment.Id">
+                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].TreatmentDate" type="date" value="@treatment.TreatmentDate.ToString("yyyy-MM-dd")" class="form-control" readonly /></td>
+                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].TreatmentDescription" value="@treatment.TreatmentDescription" class="form-control" readonly /></td>
+                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].PrescribingVeterinarian" value="@treatment.PrescribingVeterinarian" class="form-control" readonly /></td>
+                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].Cost" type="number" step="0.01" value="@treatment.Cost" class="form-control" readonly /></td>
+                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].Diagnosis" value="@treatment.Diagnosis" class="form-control" readonly /></td>
+                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].Medication" value="@treatment.Medication" class="form-control" readonly /></td>
+                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].Dosage" type="number" value="@treatment.Dosage" class="form-control" readonly /></td>
+                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].DosageUnit" value="@treatment.DosageUnit" class="form-control" readonly /></td>
+                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].Frequency" type="number" value="@treatment.Frequency" class="form-control" readonly /></td>
+                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].FrequencyUnit" value="@treatment.FrequencyUnit" class="form-control" readonly /></td>
+                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].StartDate" type="date" value="@treatment.StartDate.ToString("yyyy-MM-dd")" class="form-control" readonly /></td>
+                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].EndDate" type="date" value="@treatment.EndDate.ToString("yyyy-MM-dd")" class="form-control" readonly /></td>
+                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].Notes" value="@treatment.Notes" class="form-control" readonly /></td>
+                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].Id" type="hidden" value="@treatment.Id" /></td>
+                            <td>
+                                <a href="#" class="btn btn-secondary btn-sm" onclick="toggleReadOnly('@(treatment.Id)'); return false;">Edit</a>
+                                <a href="#" class="btn btn-danger btn-sm" onclick="deleteTreatment(@(treatment.Id)); return false;">Delete</a>
+                            </td>
+                        </tr>
+                        indexMedTreatment++;
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7">No medical treatments found for this pet .</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+        <div class="form-group">
+            <label asp-for="Species"></label>
+            <input asp-for="Species" class="form-control" />
+            <span asp-validation-for="Species" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Age"></label>
+            <input asp-for="Age" class="form-control" />
+            <span asp-validation-for="Age" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="PetGender"></label>
+            <input asp-for="PetGender" class="form-control" />
+            <span asp-validation-for="PetGender" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Color"></label>
+            <input asp-for="Color" class="form-control" />
+            <span asp-validation-for="Color" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Breed"></label>
+            <input asp-for="Breed" class="form-control" />
+            <span asp-validation-for="Breed" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Description"></label>
+            <textarea asp-for="Description" class="form-control"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Update</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </div>
 
-
-    <div class="form-group">
-        <label asp-for="Species"></label>
-        <input asp-for="Species" class="form-control" />
-        <span asp-validation-for="Species" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Age"></label>
-        <input asp-for="Age" class="form-control" />
-        <span asp-validation-for="Age" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="PetGender"></label>
-        <input asp-for="PetGender" class="form-control" />
-        <span asp-validation-for="PetGender" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Color"></label>
-        <input asp-for="Color" class="form-control" />
-        <span asp-validation-for="Color" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Breed"></label>
-        <input asp-for="Breed" class="form-control" />
-        <span asp-validation-for="Breed" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Description"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <button type="submit" class="btn btn-primary">Update</button>
-        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-    </div>
-
-    <div id="removedVaccinations" style="display: none;"></div>
+        <div id="removedVaccinations" style="display: none;"></div>
 </form>
 
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
 
+    <script src="~/Scripts/EditViewScriptVaccinations.js"></script>
+ 
+
+
+}
 
 
 

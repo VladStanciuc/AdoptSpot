@@ -112,6 +112,22 @@ function deleteVaccination(vaccineId) {
     }
 
 }
+async function updateVaccinations(petId, updatedVaccinations) {
+    const response = await fetch(`/Pets/EditVaccinationUpdate/${petId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+        },
+        body: JSON.stringify(updatedVaccinations)
+    });
+
+    if (!response.ok) {
+        console.error('Error updating vaccinations', response);
+    } else {
+        console.log('Vaccinations updated successfully');
+    }
+}
 
 
 function toggleReadOnly(vaccineId) {
@@ -133,8 +149,8 @@ function toggleReadOnly(vaccineId) {
     }
 }
 
-async function submitFormWithAddedVaccinations(event, petId) {
-    event.preventDefault();
+async function submitFormWithAddedVaccinations(petId) {
+    
     const addedVaccinations = document.querySelectorAll('tr[data-id="new"]');
     const form = document.getElementById('editForm');
 
@@ -163,11 +179,12 @@ async function submitFormWithAddedVaccinations(event, petId) {
             console.error('Error adding vaccination', response);
             return;
         }
+       
     }
 
     // Create a FormData object from the form
     let formData = new FormData(form);
-
+    
     // Perform an AJAX request to send the form data to the server
     const response = await fetch(form.action, {
         method: 'POST',
@@ -176,6 +193,7 @@ async function submitFormWithAddedVaccinations(event, petId) {
 
     if (!response.ok) {
         console.error('Error submitting form', response);
+        console.error(`Error submitting form, status: ${response.status}, status text: ${response.statusText}`);
     } else {
         console.log('Form submitted successfully');
         // refresh the page

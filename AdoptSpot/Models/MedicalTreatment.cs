@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AdoptSpot.Data.Base;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -8,7 +9,7 @@ namespace AdoptSpot.Models
 {
 
     [Table("MedicalTreatment")]
-    public class MedicalTreatment
+    public class MedicalTreatment : IEntityBase
     {
         public int Id { get; set; }
         public int MedicalRecordId { get; set; }

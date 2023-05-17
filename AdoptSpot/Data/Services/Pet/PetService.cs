@@ -22,13 +22,45 @@ namespace AdoptSpot.Data.Services
     {
         private readonly IVaccinationService _vaccinationService;
         private readonly AppDbContext _context;
+        private readonly IMedicalTreatmentService _medicalTreatmentService;
 
-        public PetService(AppDbContext context, IVaccinationService vaccinationService) : base(context)
+        public PetService(AppDbContext context, IVaccinationService vaccinationService, IMedicalTreatmentService medicalTreatmentService) : base(context)
         {
             _vaccinationService = vaccinationService;
             _context = context;
+            _medicalTreatmentService = medicalTreatmentService;
         }
+        public async Task UpdateExistingMedicalTreatments(Pet petToUpdate, [Bind(Prefix = "MedicalRecord.MedicalTreatments")] ICollection<MedicalTreatment> updatedMedicalTreatments)
+        {
+            if (petToUpdate == null)
+            {
+                throw new ArgumentException("Invalid pet");
+            }
 
+            foreach (var medicalTreatment in updatedMedicalTreatments)
+            {
+                var existingTreatment = petToUpdate.MedicalRecord.MedicalTreatments.FirstOrDefault(v => v.Id == medicalTreatment.Id);
+
+                if (existingTreatment != null)
+                {
+                    existingTreatment.TreatmentDate = medicalTreatment.TreatmentDate;
+                    existingTreatment.TreatmentDescription = medicalTreatment.TreatmentDescription;
+                    existingTreatment.PrescribingVeterinarian = medicalTreatment.PrescribingVeterinarian;
+                    existingTreatment.Cost = medicalTreatment.Cost;
+                    existingTreatment.Diagnosis = medicalTreatment.Diagnosis;
+                    existingTreatment.Medication = medicalTreatment.Medication;
+                    existingTreatment.Dosage = medicalTreatment.Dosage;
+                    existingTreatment.DosageUnit = medicalTreatment.DosageUnit;
+                    existingTreatment.Frequency = medicalTreatment.Frequency;
+                    existingTreatment.FrequencyUnit = medicalTreatment.FrequencyUnit;
+                    existingTreatment.StartDate = medicalTreatment.StartDate;
+                    existingTreatment.EndDate = medicalTreatment.EndDate;
+                    existingTreatment.Notes = medicalTreatment.Notes;
+
+                }
+            }
+            await _context.SaveChangesAsync();
+        }
         public async Task AddVaccinationAsync(Pet petToUpdate, Vaccination vaccination)
         {
             if (petToUpdate?.MedicalRecord == null)
@@ -141,6 +173,60 @@ namespace AdoptSpot.Data.Services
             }
         }
 
+        public async Task<bool> DeleteMedicalTreatmentAsync(int medicalTreatmentId)
+        {
+            var medicalTreatmentToDelete = await _medicalTreatmentService.GetByIdAsync(medicalTreatmentId);
 
+            if (medicalTreatmentToDelete != null)
+            {
+                await _medicalTreatmentService.DeleteAsync(medicalTreatmentToDelete.Id);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public async Task AddMedicalTreatmentAsync(Pet petToUpdate, MedicalTreatment newMedicalTreatment)
+        {
+            if (petToUpdate == null)
+            {
+                throw new ArgumentException("Invalid pet");
+            }
+
+            if (newMedicalTreatment == null)
+            {
+                throw new ArgumentException("Invalid medical treatment");
+            }
+
+            // Check for duplicate treatments
+            var existingTreatment = petToUpdate.MedicalRecord.MedicalTreatments
+                .FirstOrDefault(mt =>
+                    mt.TreatmentDescription == newMedicalTreatment.TreatmentDescription &&
+                    mt.PrescribingVeterinarian == newMedicalTreatment.PrescribingVeterinarian &&
+                    mt.TreatmentDate == newMedicalTreatment.TreatmentDate);
+
+            if (existingTreatment != null)
+            {
+                throw new ArgumentException("Duplicate medical treatment");
+            }
+            petToUpdate.MedicalRecord.MedicalTreatments.Add(newMedicalTreatment);
+            await _context.SaveChangesAsync();
+        }
+
+        public async  Task<ICollection<MedicalTreatment>> GetMedicalTreatmentsAsync(int petId)
+        {
+            var pet = await GetByIdAsync(petId, include: p => p.Include(p => p.MedicalRecord).ThenInclude(mt => mt.MedicalTreatments));
+            if (pet == null)
+            {
+                throw new ArgumentException("The pet do not exist");
+            }
+            var medicalTreatments = pet.MedicalRecord.MedicalTreatments;
+
+
+
+            return medicalTreatments;
+        }
     }
 }

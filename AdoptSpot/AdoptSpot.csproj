@@ -19,11 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\Services\MedicalTreatment\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="wwwroot\Scripts\EditViewScript.js" />
+    <None Include="wwwroot\Scripts\EditViewScriptVaccinations.js" />
   </ItemGroup>
 
 </Project>
