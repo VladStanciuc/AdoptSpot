@@ -10,9 +10,23 @@
 
 <head>
     <style>
-        .scrollable-table {
-            overflow-x: auto;
+        .custom-table {
+            width: 100%;
+           
+           
+            
         }
+
+            .custom-table th, .custom-table td {
+                padding: 12px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+                background-color: #f2f2f2;
+                
+            }
+
+            
+      
     </style>
 
 </head>
@@ -115,24 +129,19 @@
 
         <a asp-action="Index" class="btn btn-secondary">Cancel</a>
     </div>
-    <div class="table-responsive">
-        <table class="table">
+    <div>
+        <table class="custom-table">
             <thead>
                 <tr>
-                    <th>Treatment Date</th>
                     <th>Treatment Description</th>
                     <th>Prescribing Veterinarian</th>
                     <th>Cost</th>
                     <th>Diagnosis</th>
                     <th>Medication</th>
-                    <th>Dosage</th>
-                    <th>Dosage Unit</th>
-                    <th>Frequency</th>
-                    <th>Frequency Unit</th>
+                    <th>Dosage and Unit</th>
                     <th>Start Date</th>
                     <th>End Date</th>
-                    <th>Notes</th>
-                    <th></th>
+                  
                 </tr>
             </thead>
             <tbody id="medicalTreatmentTableBody">
@@ -141,74 +150,97 @@
                     int indexMedTreatment = 0;
                     foreach (var treatment in Model.MedicalRecord.MedicalTreatments)
                     {
-                        <tr data-id="@treatment.Id">
-                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].TreatmentDate" type="date" value="@treatment.TreatmentDate.ToString("yyyy-MM-dd")" class="form-control" readonly /></td>
-                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].TreatmentDescription" value="@treatment.TreatmentDescription" class="form-control" readonly /></td>
-                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].PrescribingVeterinarian" value="@treatment.PrescribingVeterinarian" class="form-control" readonly /></td>
-                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].Cost" type="number" step="0.01" value="@treatment.Cost" class="form-control" readonly /></td>
-                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].Diagnosis" value="@treatment.Diagnosis" class="form-control" readonly /></td>
-                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].Medication" value="@treatment.Medication" class="form-control" readonly /></td>
-                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].Dosage" type="number" value="@treatment.Dosage" class="form-control" readonly /></td>
-                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].DosageUnit" value="@treatment.DosageUnit" class="form-control" readonly /></td>
-                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].Frequency" type="number" value="@treatment.Frequency" class="form-control" readonly /></td>
-                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].FrequencyUnit" value="@treatment.FrequencyUnit" class="form-control" readonly /></td>
-                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].StartDate" type="date" value="@treatment.StartDate.ToString("yyyy-MM-dd")" class="form-control" readonly /></td>
-                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].EndDate" type="date" value="@treatment.EndDate.ToString("yyyy-MM-dd")" class="form-control" readonly /></td>
-                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].Notes" value="@treatment.Notes" class="form-control" readonly /></td>
-                            <td><input name="MedicalRecord.MedicalTreatments[@indexMedTreatment].Id" type="hidden" value="@treatment.Id" /></td>
-                            <td>
-                                <a href="#" class="btn btn-secondary btn-sm" onclick="toggleReadOnly('@(treatment.Id)'); return false;">Edit</a>
-                                <a href="#" class="btn btn-danger btn-sm" onclick="deleteTreatment(@(treatment.Id)); return false;">Delete</a>
-                            </td>
-                        </tr>
+                <tr>
+                    <td class="TreatmentDescription" data-field="TreatmentDescription">
+                        <span>@treatment.TreatmentDescription</span>
+                        <input type="text" value="@treatment.TreatmentDescription" style="display: none" />
+                    </td>
+                    <td class="PrescribingVeterinarian" data-field="PrescribingVeterinarian">
+                        <span>@treatment.PrescribingVeterinarian</span>
+                        <input type="text" value="@treatment.PrescribingVeterinarian" style="display: none" />
+                    </td>
+                    <td class="Cost" data-field="Cost">
+                        <span>@treatment.Cost</span>
+                        <input type="text" value="@treatment.Cost" style="display: none" />
+                    </td>
+                    <td class="Diagnosis" data-field="Diagnosis">
+                        <span>@treatment.Diagnosis</span>
+                        <input type="text" value="@treatment.Diagnosis" style="display: none" />
+                    </td>
+                    <td class="Medication" data-field="Medication">
+                        <span>@treatment.Medication</span>
+                        <input type="text" value="@treatment.Medication" style="display: none" />
+                    </td>
+                    <td class="DosageAndUnit" data-field="DosageAndUnit">
+                        <span>@treatment.DosageAndUnit</span>
+                        <input type="text" value="@treatment.DosageAndUnit" style="display: none" />
+                    </td>
+                    <td class="StartDate" data-field="StartDate">
+                        <span>@treatment.StartDate.ToString("yyyy-MM-dd")</span>
+                        <input type="date" value="@treatment.StartDate.ToString("yyyy-MM-dd")" style="display: none" />
+                    </td>
+                    <td class="EndDate" data-field="EndDate">
+                        <span>@treatment.EndDate.ToString("yyyy-MM-dd")</span>
+                        <input type="date" value="@treatment.EndDate.ToString("yyyy-MM-dd")" style="display: none" />
+                    </td>
+                   
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-secondary btn-sm edit-button" data-id="@treatment.Id">Edit</button>
+                            <button type="button" class="btn btn-success btn-sm update-button" data-id="@treatment.Id" style="display: none">Update</button>
+                            <button type="button" class="btn btn-warning btn-sm cancel-button" data-id="@treatment.Id" style="display: none">Cancel</button>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="deleteTreatment(@(treatment.Id))">Delete</button>
+                        </div>
+                    </td>
+                </tr>
                         indexMedTreatment++;
                     }
                 }
                 else
                 {
                     <tr>
-                        <td colspan="7">No medical treatments found for this pet .</td>
+                        <td colspan="10">No medical treatments found for this pet .</td>
                     </tr>
                 }
             </tbody>
         </table>
     </div>
-        <div class="form-group">
-            <label asp-for="Species"></label>
-            <input asp-for="Species" class="form-control" />
-            <span asp-validation-for="Species" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="Age"></label>
-            <input asp-for="Age" class="form-control" />
-            <span asp-validation-for="Age" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="PetGender"></label>
-            <input asp-for="PetGender" class="form-control" />
-            <span asp-validation-for="PetGender" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="Color"></label>
-            <input asp-for="Color" class="form-control" />
-            <span asp-validation-for="Color" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="Breed"></label>
-            <input asp-for="Breed" class="form-control" />
-            <span asp-validation-for="Breed" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="Description"></label>
-            <textarea asp-for="Description" class="form-control"></textarea>
-            <span asp-validation-for="Description" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-primary">Update</button>
-            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-        </div>
+    <div class="form-group">
+        <label asp-for="Species"></label>
+        <input asp-for="Species" class="form-control" />
+        <span asp-validation-for="Species" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Age"></label>
+        <input asp-for="Age" class="form-control" />
+        <span asp-validation-for="Age" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="PetGender"></label>
+        <input asp-for="PetGender" class="form-control" />
+        <span asp-validation-for="PetGender" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Color"></label>
+        <input asp-for="Color" class="form-control" />
+        <span asp-validation-for="Color" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Breed"></label>
+        <input asp-for="Breed" class="form-control" />
+        <span asp-validation-for="Breed" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </div>
 
-        <div id="removedVaccinations" style="display: none;"></div>
+    <div id="removedVaccinations" style="display: none;"></div>
 </form>
 
 @section Scripts {
@@ -218,7 +250,82 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
 
     <script src="~/Scripts/EditViewScriptVaccinations.js"></script>
- 
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+
+            $("#medicalTreatmentTableBody .edit-button").on("click", function () {
+                var row = $(this).closest("tr");
+                $("td", row).each(function (i) {
+                    if (i < 8) { // Exclude last cell with buttons
+                        var span = $(this).find("span");
+                        var input = $(this).find("input");
+                        input.width(input.val().length *11);
+                        if (span.length > 0) {
+                            span.hide();
+                            input.show();
+                        } else {
+                            var text = $(this).text();
+                            $(this).html('<span>' + text + '</span><input type="text" value="' + text + '" style="display: none" />');
+                            $(this).find("span").hide();
+                            $(this).find("input").show();
+                        }
+                        $(this).css("white-space", "nowrap");
+                    }
+                });
+                row.find(".update-button").show().css("display", "inline-block");;
+                row.find(".cancel-button").show().css("display", "inline-block");;
+                $(this).hide();
+            });
+
+            $("#medicalTreatmentTableBody .update-button").on("click", function () {
+                var row = $(this).closest("tr");
+                var treatment = {};
+                var petId = $("#petId").val();
+                treatment.Id = $(this).data('id');
+                $("td", row).each(function (i) {
+                    if (i < 8) {
+                        var span = $(this).find("span");
+                        var input = $(this).find("input");
+                        span.html(input.val());
+                        span.show();
+                        input.hide();
+                        treatment[$(this).data('field')] = input.val();
+                    }
+                });
+
+                row.find(".edit-button").show();
+                row.find(".cancel-button").hide();
+                $(this).hide();
+
+                $.ajax({
+                    type: "POST",
+                    url: "UpdateMedicalTreatment/" + petId ,
+                    data: JSON.stringify(treatment),
+                    contentType: "application/json", 
+                    dataType: "json"
+                });
+            });
+
+            $("#medicalTreatmentTableBody .cancel-button").on("click", function () {
+                var row = $(this).closest("tr");
+                $("td", row).each(function (i) {
+                    if (i < 8) {
+                        var span = $(this).find("span");
+                        var input = $(this).find("input");
+                        input.val(span.html());
+                        span.show();
+                        input.hide();
+                    }
+                });
+                row.find(".edit-button").show();
+                row.find(".update-button").hide();
+                $(this).hide();
+            });
+        });
+    </script>
+
 
 
 }

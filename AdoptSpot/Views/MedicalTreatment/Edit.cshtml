@@ -1,0 +1,47 @@
+﻿@model AdoptSpot.Models.Pet
+
+<h2>Edit Medical Treatment</h2>
+
+<form asp-action="Update" method="post">
+    <div class="form-group">
+        <label for="TreatmentDescription">Treatment Description:</label>
+        <input type="text" class="form-control" id="TreatmentDescription" name="TreatmentDescription" value="@Model.MedicalRecord.MedicalTreatments.Select(t => t.TreatmentDescription)" required>
+    </div>
+
+    <div class="form-group">
+        <label for="PrescribingVeterinarian">Prescribing Veterinarian:</label>
+        <input type="text" class="form-control" id="PrescribingVeterinarian" name="PrescribingVeterinarian" value="@Model.MedicalRecord.MedicalTreatments.Select(t => t.PrescribingVeterinarian)" required>
+    </div>
+
+    <div class="form-group">
+        <label for="Cost">Cost:</label>
+        <input type="number" class="form-control" id="Cost" name="Cost" value="@Model.MedicalRecord.MedicalTreatments.Select(t => t.Cost)" step="0.01" required>
+    </div>
+
+    <div class="form-group">
+        <label for="Diagnosis">Diagnosis:</label>
+        <input type="text" class="form-control" id="Diagnosis" name="Diagnosis" value="@Model.MedicalRecord.MedicalTreatments.Select(t => t.Diagnosis)" required>
+    </div>
+
+    <div class="form-group">
+        <label for="Medication">Medication:</label>
+        <input type="text" class="form-control" id="Medication" name="Medication" value="@Model.MedicalRecord.MedicalTreatments.Select(t => t.Medication)" required>
+    </div>
+
+    <div class="form-group">
+        <label for="DosageAndUnit">Dosage and Unit:</label>
+        <input type="text" class="form-control" id="DosageAndUnit" name="DosageAndUnit" value="@Model.MedicalRecord.MedicalTreatments.Select(t => t.DosageAndUnit)" required>
+    </div>
+
+    <div class="form-group">
+        <label for="StartDate">Start Date:</label>
+        <input type="date" class="form-control" id="StartDate" name="StartDate" value="@Model.MedicalRecord.MedicalTreatments.Select(t => t.StartDate.ToString("yyyy-MM-dd"))" required>
+    </div>
+
+    <div class="form-group">
+        <label for="EndDate">End Date:</label>
+        <input type="date" class="form-control" id="EndDate" name="EndDate" value="@Model.MedicalRecord.MedicalTreatments.Select(t => t.EndDate.ToString("yyyy-MM-dd"))" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update</button>
+</form>

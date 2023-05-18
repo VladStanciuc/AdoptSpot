@@ -157,16 +157,17 @@ namespace AdoptSpot.Controllers
             return Ok();
         }
         [HttpPost]
-        [Route("UpdateMedicalTreatment/{petId}")]
-        public async Task<IActionResult> UpdateMedicalTreatment(int petId, ICollection<MedicalTreatment> medicalTreatment)
+        [Route("Edit/UpdateMedicalTreatment/{petId}")]
+        public async Task<IActionResult> UpdateMedicalTreatment(int petId, [FromBody] MedicalTreatment updatedMedicalTreatment)
         {
+          
             var petToUpdate = await _service.GetByIdAsync(petId, include: p => p.Include(p => p.MedicalRecord).ThenInclude(mt => mt.MedicalTreatments));
             if (petToUpdate == null)
             {
                 return NotFound();
             }
-
-            await _service.UpdateExistingMedicalTreatments(petToUpdate, medicalTreatment);
+           
+            await _service.UpdateExistingMedicalTreatments(petToUpdate, updatedMedicalTreatment);
             return Ok();
         }
         [HttpDelete]

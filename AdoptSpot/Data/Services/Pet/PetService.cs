@@ -30,36 +30,29 @@ namespace AdoptSpot.Data.Services
             _context = context;
             _medicalTreatmentService = medicalTreatmentService;
         }
-        public async Task UpdateExistingMedicalTreatments(Pet petToUpdate, [Bind(Prefix = "MedicalRecord.MedicalTreatments")] ICollection<MedicalTreatment> updatedMedicalTreatments)
+        public async Task UpdateExistingMedicalTreatments(Pet petToUpdate, MedicalTreatment updatedMedicalTreatment)
         {
             if (petToUpdate == null)
             {
                 throw new ArgumentException("Invalid pet");
             }
-
-            foreach (var medicalTreatment in updatedMedicalTreatments)
-            {
-                var existingTreatment = petToUpdate.MedicalRecord.MedicalTreatments.FirstOrDefault(v => v.Id == medicalTreatment.Id);
-
+            
+                var existingTreatment = petToUpdate.MedicalRecord.MedicalTreatments.FirstOrDefault(v => v.Id == updatedMedicalTreatment.Id);
+                
                 if (existingTreatment != null)
                 {
-                    existingTreatment.TreatmentDate = medicalTreatment.TreatmentDate;
-                    existingTreatment.TreatmentDescription = medicalTreatment.TreatmentDescription;
-                    existingTreatment.PrescribingVeterinarian = medicalTreatment.PrescribingVeterinarian;
-                    existingTreatment.Cost = medicalTreatment.Cost;
-                    existingTreatment.Diagnosis = medicalTreatment.Diagnosis;
-                    existingTreatment.Medication = medicalTreatment.Medication;
-                    existingTreatment.Dosage = medicalTreatment.Dosage;
-                    existingTreatment.DosageUnit = medicalTreatment.DosageUnit;
-                    existingTreatment.Frequency = medicalTreatment.Frequency;
-                    existingTreatment.FrequencyUnit = medicalTreatment.FrequencyUnit;
-                    existingTreatment.StartDate = medicalTreatment.StartDate;
-                    existingTreatment.EndDate = medicalTreatment.EndDate;
-                    existingTreatment.Notes = medicalTreatment.Notes;
-
+                petToUpdate.MedicalRecord.MedicalTreatments.FirstOrDefault(v => v.Id == updatedMedicalTreatment.Id).TreatmentDescription = updatedMedicalTreatment.TreatmentDescription;
+                petToUpdate.MedicalRecord.MedicalTreatments.FirstOrDefault(v => v.Id == updatedMedicalTreatment.Id).PrescribingVeterinarian = updatedMedicalTreatment.PrescribingVeterinarian;
+                petToUpdate.MedicalRecord.MedicalTreatments.FirstOrDefault(v => v.Id == updatedMedicalTreatment.Id).Cost = updatedMedicalTreatment.Cost;
+                petToUpdate.MedicalRecord.MedicalTreatments.FirstOrDefault(v => v.Id == updatedMedicalTreatment.Id).Diagnosis = updatedMedicalTreatment.Diagnosis;
+                petToUpdate.MedicalRecord.MedicalTreatments.FirstOrDefault(v => v.Id == updatedMedicalTreatment.Id).Medication = updatedMedicalTreatment.Medication;
+                petToUpdate.MedicalRecord.MedicalTreatments.FirstOrDefault(v => v.Id == updatedMedicalTreatment.Id).DosageAndUnit = updatedMedicalTreatment.DosageAndUnit;
+                petToUpdate.MedicalRecord.MedicalTreatments.FirstOrDefault(v => v.Id == updatedMedicalTreatment.Id).StartDate = updatedMedicalTreatment.StartDate;
+                petToUpdate.MedicalRecord.MedicalTreatments.FirstOrDefault(v => v.Id == updatedMedicalTreatment.Id).EndDate = updatedMedicalTreatment.EndDate;
                 }
-            }
-            await _context.SaveChangesAsync();
+            
+            await UpdateAsync(petToUpdate.Id, petToUpdate);
+           
         }
         public async Task AddVaccinationAsync(Pet petToUpdate, Vaccination vaccination)
         {
@@ -119,7 +112,7 @@ namespace AdoptSpot.Data.Services
                     
                 }
             }
-            await _context.SaveChangesAsync();
+            await UpdateAsync(petToUpdate.Id, petToUpdate);
 
         }
 
@@ -173,19 +166,11 @@ namespace AdoptSpot.Data.Services
             }
         }
 
-        public async Task<bool> DeleteMedicalTreatmentAsync(int medicalTreatmentId)
+        public async Task DeleteMedicalTreatmentAsync(int medicalTreatmentId)
         {
             var medicalTreatmentToDelete = await _medicalTreatmentService.GetByIdAsync(medicalTreatmentId);
-
-            if (medicalTreatmentToDelete != null)
-            {
-                await _medicalTreatmentService.DeleteAsync(medicalTreatmentToDelete.Id);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            
+           
         }
 
         public async Task AddMedicalTreatmentAsync(Pet petToUpdate, MedicalTreatment newMedicalTreatment)
@@ -204,8 +189,8 @@ namespace AdoptSpot.Data.Services
             var existingTreatment = petToUpdate.MedicalRecord.MedicalTreatments
                 .FirstOrDefault(mt =>
                     mt.TreatmentDescription == newMedicalTreatment.TreatmentDescription &&
-                    mt.PrescribingVeterinarian == newMedicalTreatment.PrescribingVeterinarian &&
-                    mt.TreatmentDate == newMedicalTreatment.TreatmentDate);
+                    mt.PrescribingVeterinarian == newMedicalTreatment.PrescribingVeterinarian); 
+                    
 
             if (existingTreatment != null)
             {
