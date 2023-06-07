@@ -166,11 +166,14 @@ namespace AdoptSpot.Data.Services
             }
         }
 
-        public async Task DeleteMedicalTreatmentAsync(int medicalTreatmentId)
+        public async Task DeleteMedicalTreatmentAsync(Pet petToUpdate, int medicalTreatmentId)
         {
-            var medicalTreatmentToDelete = await _medicalTreatmentService.GetByIdAsync(medicalTreatmentId);
-            
-           
+            var medicalTreatmentToRemove = petToUpdate.MedicalRecord.MedicalTreatments.FirstOrDefault(mt => mt.Id == medicalTreatmentId);
+            if (medicalTreatmentToRemove != null)
+            {
+                petToUpdate.MedicalRecord.MedicalTreatments.Remove(medicalTreatmentToRemove);
+            }
+            await UpdateAsync(petToUpdate.Id, petToUpdate);
         }
 
         public async Task AddMedicalTreatmentAsync(Pet petToUpdate, MedicalTreatment newMedicalTreatment)
@@ -197,7 +200,7 @@ namespace AdoptSpot.Data.Services
                 throw new ArgumentException("Duplicate medical treatment");
             }
             petToUpdate.MedicalRecord.MedicalTreatments.Add(newMedicalTreatment);
-            await _context.SaveChangesAsync();
+            await UpdateAsync(petToUpdate.Id,petToUpdate);
         }
 
         public async  Task<ICollection<MedicalTreatment>> GetMedicalTreatmentsAsync(int petId)

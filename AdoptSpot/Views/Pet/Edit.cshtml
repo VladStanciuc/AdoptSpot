@@ -141,7 +141,7 @@
                     <th>Dosage and Unit</th>
                     <th>Start Date</th>
                     <th>End Date</th>
-                  
+
                 </tr>
             </thead>
             <tbody id="medicalTreatmentTableBody">
@@ -150,49 +150,53 @@
                     int indexMedTreatment = 0;
                     foreach (var treatment in Model.MedicalRecord.MedicalTreatments)
                     {
-                <tr>
-                    <td class="TreatmentDescription" data-field="TreatmentDescription">
-                        <span>@treatment.TreatmentDescription</span>
-                        <input type="text" value="@treatment.TreatmentDescription" style="display: none" />
-                    </td>
-                    <td class="PrescribingVeterinarian" data-field="PrescribingVeterinarian">
-                        <span>@treatment.PrescribingVeterinarian</span>
-                        <input type="text" value="@treatment.PrescribingVeterinarian" style="display: none" />
-                    </td>
-                    <td class="Cost" data-field="Cost">
-                        <span>@treatment.Cost</span>
-                        <input type="text" value="@treatment.Cost" style="display: none" />
-                    </td>
-                    <td class="Diagnosis" data-field="Diagnosis">
-                        <span>@treatment.Diagnosis</span>
-                        <input type="text" value="@treatment.Diagnosis" style="display: none" />
-                    </td>
-                    <td class="Medication" data-field="Medication">
-                        <span>@treatment.Medication</span>
-                        <input type="text" value="@treatment.Medication" style="display: none" />
-                    </td>
-                    <td class="DosageAndUnit" data-field="DosageAndUnit">
-                        <span>@treatment.DosageAndUnit</span>
-                        <input type="text" value="@treatment.DosageAndUnit" style="display: none" />
-                    </td>
-                    <td class="StartDate" data-field="StartDate">
-                        <span>@treatment.StartDate.ToString("yyyy-MM-dd")</span>
-                        <input type="date" value="@treatment.StartDate.ToString("yyyy-MM-dd")" style="display: none" />
-                    </td>
-                    <td class="EndDate" data-field="EndDate">
-                        <span>@treatment.EndDate.ToString("yyyy-MM-dd")</span>
-                        <input type="date" value="@treatment.EndDate.ToString("yyyy-MM-dd")" style="display: none" />
-                    </td>
-                   
-                    <td>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-secondary btn-sm edit-button" data-id="@treatment.Id">Edit</button>
-                            <button type="button" class="btn btn-success btn-sm update-button" data-id="@treatment.Id" style="display: none">Update</button>
-                            <button type="button" class="btn btn-warning btn-sm cancel-button" data-id="@treatment.Id" style="display: none">Cancel</button>
-                            <button type="button" class="btn btn-danger btn-sm" onclick="deleteTreatment(@(treatment.Id))">Delete</button>
-                        </div>
-                    </td>
-                </tr>
+                        <tr>
+                            <td class="TreatmentDescription" data-field="TreatmentDescription">
+                                <span>@treatment.TreatmentDescription</span>
+                                <input type="text" value="@treatment.TreatmentDescription" style="display: none" />
+                            </td>
+                            <td class="PrescribingVeterinarian" data-field="PrescribingVeterinarian">
+                                <span>@treatment.PrescribingVeterinarian</span>
+                                <input type="text" value="@treatment.PrescribingVeterinarian" style="display: none" />
+                            </td>
+                            <td class="Cost" data-field="Cost">
+                                <span>@treatment.Cost</span>
+                                <input type="text" value="@treatment.Cost" style="display: none" />
+                            </td>
+                            <td class="Diagnosis" data-field="Diagnosis">
+                                <span>@treatment.Diagnosis</span>
+                                <input type="text" value="@treatment.Diagnosis" style="display: none" />
+                            </td>
+                            <td class="Medication" data-field="Medication">
+                                <span>@treatment.Medication</span>
+                                <input type="text" value="@treatment.Medication" style="display: none" />
+                            </td>
+                            <td class="DosageAndUnit" data-field="DosageAndUnit">
+                                <span>@treatment.DosageAndUnit</span>
+                                <input type="text" value="@treatment.DosageAndUnit" style="display: none" />
+                            </td>
+                            <td class="StartDate" data-field="StartDate">
+                                <span>@treatment.StartDate.ToString("yyyy-MM-dd")</span>
+                                <input type="date" value="@treatment.StartDate.ToString("yyyy-MM-dd")" style="display: none" />
+                            </td>
+                            <td class="EndDate" data-field="EndDate">
+                                <span>@treatment.EndDate.ToString("yyyy-MM-dd")</span>
+                                <input type="date" value="@treatment.EndDate.ToString("yyyy-MM-dd")" style="display: none" />
+                            </td>
+
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-secondary btn-sm edit-button" data-id="@treatment.Id">Edit</button>
+                                    <button type="button" class="btn btn-success btn-sm update-button" data-id="@treatment.Id" style="display: none">Update</button>
+                                    <button type="button" class="btn btn-warning btn-sm cancel-button" data-id="@treatment.Id" style="display: none">Cancel</button>
+                                    <button type="button" class="btn btn-danger btn-sm delete-button" data-id="@(treatment.Id)">Delete</button>
+
+                                </div>
+                            </td>
+
+
+                        </tr>
+
                         indexMedTreatment++;
                     }
                 }
@@ -204,6 +208,7 @@
                 }
             </tbody>
         </table>
+        <button type="button" class="btn btn-primary btn-sm add-button">Add Medical Treatment</button>
     </div>
     <div class="form-group">
         <label asp-for="Species"></label>
@@ -324,6 +329,123 @@
                 $(this).hide();
             });
         });
+
+        $("#medicalTreatmentTableBody .delete-button").on("click", function () {
+            var id = $(this).data("id");
+            var petId = $("#petId").val();
+            var row = $(this).closest("tr"); // Store the row
+            if (confirm('Are you sure to delete this record?')) {
+                $.ajax({
+                    url: "DeleteMedicalTreatment/" + petId + "/" + id,
+                    type: 'DELETE',
+                    success: function (response) {
+                        if (response.status === "success") {
+                            // remove row from table
+                            row.remove(); // Use the stored row here
+                        } else {
+                            alert('Error occurred while deleting the treatment.')
+                        }
+                    },
+                    error: function (err) {
+                        alert('Error occurred while deleting the treatment.')
+                    }
+                });
+            }
+        });
+
+        $(".add-button").on("click", function () {
+            // Define the row HTML
+            var rowHtml = `
+        <tr>
+            <td class="TreatmentDescription" data-field="TreatmentDescription">
+                <span></span>
+                <input type="text" style="display: block" />
+            </td>
+            <td class="PrescribingVeterinarian" data-field="PrescribingVeterinarian">
+                <span></span>
+                <input type="text" style="display: block" />
+            </td>
+            <td class="Cost" data-field="Cost">
+                <span></span>
+                <input type="text" style="display: block" />
+            </td>
+            <td class="Diagnosis" data-field="Diagnosis">
+                <span></span>
+                <input type="text" style="display: block" />
+            </td>
+            <td class="Medication" data-field="Medication">
+                <span></span>
+                <input type="text" style="display: block" />
+            </td>
+            <td class="DosageAndUnit" data-field="DosageAndUnit">
+                <span></span>
+                <input type="text" style="display: block" />
+            </td>
+            <td class="StartDate" data-field="StartDate">
+                <span></span>
+                <input type="date" style="display: block" />
+            </td>
+            <td class="EndDate" data-field="EndDate">
+                <span></span>
+                <input type="date" style="display: block" />
+            </td>
+            <td>
+                <button type="button" class="btn btn-success btn-sm save-new-treatment-button">Save</button>
+                <button type="button" class="btn btn-warning btn-sm cancel-new-treatment-button">Cancel</button>
+            </td>
+        </tr>`;
+            // Add the row to the table body
+            $("#medicalTreatmentTableBody").prepend(rowHtml);
+        });
+
+
+        
+        $("#medicalTreatmentTableBody").on("click", ".save-new-treatment-button", function () {
+            var row = $(this).closest("tr");
+            var petId = $("#petId").val();
+
+            var treatmentData = {
+                TreatmentDescription: row.find("td.TreatmentDescription input").val(),
+                PrescribingVeterinarian: row.find("td.PrescribingVeterinarian input").val(),
+                Cost: row.find("td.Cost input").val(),
+                Diagnosis: row.find("td.Diagnosis input").val(),
+                Medication: row.find("td.Medication input").val(),
+                DosageAndUnit: row.find("td.DosageAndUnit input").val(),
+                StartDate: row.find("td.StartDate input").val(),
+                EndDate: row.find("td.EndDate input").val()
+            };
+
+            $.ajax({
+                url: "AddMedicalTreatment/" + petId,
+                type: 'POST',
+                data: JSON.stringify(treatmentData),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.status === "success") {
+                        console.log('AJAX call succeeded'); // Add this line
+                        // convert row to non-editable
+                        row.find("span").each(function () {
+                            $(this).text($(this).next("input").val());
+                        });
+                        row.find("input").hide();
+                        row.find(".save-new-treatment-button").remove();
+                        row.find(".cancel-new-treatment-button").remove();
+                        row.append('<button type="button" class="btn btn-primary btn-sm edit-button">Edit</button><button type="button" class="btn btn-danger btn-sm delete-button">Delete</button>');
+                    } else {
+                        alert('Error occurred while adding the treatment.');
+                    }
+                },
+                error: function (err) {
+                    alert('Error occurred while adding the treatment.');
+                }
+            });
+        });
+
+        $("#medicalTreatmentTableBody").on("click", ".cancel-new-treatment-button", function () {
+            $(this).closest("tr").remove();
+        });
+
     </script>
 
 

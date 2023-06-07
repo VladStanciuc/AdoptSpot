@@ -17,7 +17,7 @@ namespace AdoptSpot.Data.Services
         Task UpdateExistingVaccinationsAsync(Pet petToUpdate, [Bind(Prefix = "MedicalRecord.Vaccines")] ICollection<Vaccination> updatedVaccinations);
         Task DeleteImagesAsync(Pet petToUpdate, [FromBody] int[] imageIds);
         Task UpdateExistingMedicalTreatments(Pet petToUpdate, MedicalTreatment updatedMedicalTreatments);
-        Task DeleteMedicalTreatmentAsync(int medicalTreatmentId);
+        Task DeleteMedicalTreatmentAsync(Pet petToUpdate,int medicalTreatmentId);
         Task AddMedicalTreatmentAsync(Pet petToUpdate, MedicalTreatment newMedicalTreatment);
         Task<ICollection<MedicalTreatment>> GetMedicalTreatmentsAsync(int petId);
     }

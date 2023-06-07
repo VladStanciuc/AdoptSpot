@@ -144,7 +144,7 @@ namespace AdoptSpot.Controllers
       
 
         [HttpPost]
-        [Route("AddMedicalTreatment/{petId}")]
+        [Route("Edit/AddMedicalTreatment/{petId}")]
         public async Task<IActionResult> AddMedicalTreatment(int petId, [FromBody] MedicalTreatment medicalTreatment)
         {
             var petToUpdate = await _service.GetByIdAsync(petId, include: p => p.Include(p => p.MedicalRecord).ThenInclude(mt => mt.MedicalTreatments));
@@ -153,8 +153,15 @@ namespace AdoptSpot.Controllers
                 return NotFound();
             }
 
-            await _service.AddMedicalTreatmentAsync(petToUpdate, medicalTreatment);
-            return Ok();
+            try
+            {
+                await _service.AddMedicalTreatmentAsync(petToUpdate, medicalTreatment);
+                return Ok(new { status = "success" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { status = "error", message = ex.Message });
+            }
         }
         [HttpPost]
         [Route("Edit/UpdateMedicalTreatment/{petId}")]
@@ -171,17 +178,18 @@ namespace AdoptSpot.Controllers
             return Ok();
         }
         [HttpDelete]
-        [Route("DeleteMedicalTreatment/{petId}")]
-        public async Task<IActionResult> DeleteMedicalTreatment(int medicalTreatmentId)
+        [Route("Edit/DeleteMedicalTreatment/{petId}/{medicalTreatmentId}")]
+        public async Task<IActionResult> DeleteMedicalTreatment(int petId, int medicalTreatmentId)
         {
-            var result = await _service.DeleteMedicalTreatmentAsync(medicalTreatmentId);
-            if (result)
+            var petToUpdate = await _service.GetByIdAsync(petId, include: p => p.Include(p => p.MedicalRecord).ThenInclude(mt => mt.MedicalTreatments));
+            try
             {
-                return Json(new { success = true });
+                await _service.DeleteMedicalTreatmentAsync(petToUpdate, medicalTreatmentId);
+                return Json(new { status = "success" });
             }
-            else
+            catch (Exception)
             {
-                return Json(new { success = false });
+                return Json(new { status = "error" });
             }
         }
 
