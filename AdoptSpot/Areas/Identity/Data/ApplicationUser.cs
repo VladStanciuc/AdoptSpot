@@ -1,30 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Threading.Tasks;
 using AdoptSpot.Data.Enums;
 using AdoptSpot.Models;
-using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
-namespace AdoptSpot.Models
+namespace AdoptSpot.Areas.Identity.Data
 {
-    [Table("User")]
-    public class User
+    // Add profile data for application users by adding properties to the ApplicationUser class
+    public class ApplicationUser : IdentityUser
     {
-        [Key]
-        public int Id { get; set; }
-        public string Username { get; set; }
+       
         public string Password { get; set; }
-        public string Email { get; set; }
+        [PersonalData]
+        [Column(TypeName ="nvarchar(100")]
         public string FirstName { get; set; }
+        [PersonalData]
+        [Column(TypeName = "nvarchar(100")]
         public string LastName { get; set; }
         public string Phone { get; set; }
         public string Address { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
         public UserRole UserRole { get; set; }
-   
+
         public ICollection<Adoption> Adoptions { get; set; }
     }
 }

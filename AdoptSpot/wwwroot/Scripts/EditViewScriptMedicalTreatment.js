@@ -1,77 +1,190 @@
-﻿function toggleReadOnly(treatmentId) {
-    var treatmentsTableBody = document.getElementById("treatmentsTableBody");
-    var row = treatmentsTableBody.querySelector(`tr[data-id="${treatmentId}"]`);
-    if (row) {
-        var inputs = row.querySelectorAll("input");
+﻿
+    
+        $(function () {
 
-        for (var i = 0; i < inputs.length; i++) {
-            var input = inputs[i];
-            if (input.hasAttribute("readonly")) {
-                input.removeAttribute("readonly");
-            } else {
-                input.setAttribute("readonly", "");
-            }
-        }
-    } else {
-        console.error("Error: Row not found for treatmentId: ", treatmentId);
-    }
-}
+            $("#medicalTreatmentTableBody .edit-button").on("click", function () {
+                var row = $(this).closest("tr");
+                $("td", row).each(function (i) {
+                    if (i < 8) { // Exclude last cell with buttons
+                        var span = $(this).find("span");
+                        var input = $(this).find("input");
+                        input.width(input.val().length *11);
+                        if (span.length > 0) {
+                            span.hide();
+                            input.show();
+                        } else {
+                            var text = $(this).text();
+                            $(this).html('<span>' + text + '</span><input type="text" value="' + text + '" style="display: none" />');
+                            $(this).find("span").hide();
+                            $(this).find("input").show();
+                        }
+                        $(this).css("white-space", "nowrap");
+                    }
+                });
+                row.find(".update-button").show().css("display", "inline-block");;
+                row.find(".cancel-button").show().css("display", "inline-block");;
+                $(this).hide();
+            });
 
-async function submitFormWithAddedTreatments(petId) {
+            $("#medicalTreatmentTableBody .update-button").on("click", function () {
+                var row = $(this).closest("tr");
+                var treatment = {};
+                var petId = $("#petId").val();
+                treatment.Id = $(this).data('id');
+                $("td", row).each(function (i) {
+                    if (i < 8) {
+                        var span = $(this).find("span");
+                        var input = $(this).find("input");
+                        span.html(input.val());
+                        span.show();
+                        input.hide();
+                        treatment[$(this).data('field')] = input.val();
+                    }
+                });
 
-    const addedTreatments = document.querySelectorAll('tr[data-id="new"]');
-    const form = document.getElementById('editForm');
+                row.find(".edit-button").show();
+                row.find(".cancel-button").hide();
+                $(this).hide();
 
-    for (const treatmentRow of addedTreatments) {
-        const treatment = {
-            TreatmentDate: treatmentRow.querySelector('input[name*="TreatmentDate"]').value,
-            TreatmentDescription: treatmentRow.querySelector('input[name*="TreatmentDescription"]').value,
-            PrescribingVeterinarian: treatmentRow.querySelector('input[name*="PrescribingVeterinarian"]').value,
-            Cost: treatmentRow.querySelector('input[name*="Cost"]').value,
-            Diagnosis: treatmentRow.querySelector('input[name*="Diagnosis"]').value,
-            Medication: treatmentRow.querySelector('input[name*="Medication"]').value,
-            Dosage: treatmentRow.querySelector('input[name*="Dosage"]').value,
-            DosageUnit: treatmentRow.querySelector('input[name*="DosageUnit"]').value,
-            Frequency: treatmentRow.querySelector('input[name*="Frequency"]').value,
-            FrequencyUnit: treatmentRow.querySelector('input[name*="FrequencyUnit"]').value,
-            StartDate: treatmentRow.querySelector('input[name*="StartDate"]').value,
-            EndDate: treatmentRow.querySelector('input[name*="EndDate"]').value,
-            Notes: treatmentRow.querySelector('input[name*="Notes"]').value
-        };
+                $.ajax({
+                    type: "POST",
+                    url: "UpdateMedicalTreatment/" + petId ,
+                    data: JSON.stringify(treatment),
+                    contentType: "application/json", 
+                    dataType: "json"
+                });
+            });
 
-        console.log(JSON.stringify(treatment));
-
-        const response = await fetch(`/Pets/EditTreatment/${petId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-            },
-            body: JSON.stringify(treatment)
+            $("#medicalTreatmentTableBody .cancel-button").on("click", function () {
+                var row = $(this).closest("tr");
+                $("td", row).each(function (i) {
+                    if (i < 8) {
+                        var span = $(this).find("span");
+                        var input = $(this).find("input");
+                        input.val(span.html());
+                        span.show();
+                        input.hide();
+                    }
+                });
+                row.find(".edit-button").show();
+                row.find(".update-button").hide();
+                $(this).hide();
+            });
         });
 
-        if (!response.ok) {
-            console.error('Error adding treatment', response);
-            return;
-        }
+        $("#medicalTreatmentTableBody .delete-button").on("click", function () {
+            var id = $(this).data("id");
+            var petId = $("#petId").val();
+            var row = $(this).closest("tr"); // Store the row
+            if (confirm('Are you sure to delete this record?')) {
+                $.ajax({
+                    url: "DeleteMedicalTreatment/" + petId + "/" + id,
+                    type: 'DELETE',
+                    success: function (response) {
+                        if (response.status === "success") {
+                            // remove row from table
+                            row.remove(); // Use the stored row here
+                        } else {
+                            alert('Error occurred while deleting the treatment.')
+                        }
+                    },
+                    error: function (err) {
+                        alert('Error occurred while deleting the treatment.')
+                    }
+                });
+            }
+        });
 
-    }
+        $(".add-button").on("click", function () {
+            // Define the row HTML
+            var rowHtml = `
+        <tr>
+            <td class="TreatmentDescription" data-field="TreatmentDescription">
+                <span></span>
+                <input type="text" style="display: block" />
+            </td>
+            <td class="PrescribingVeterinarian" data-field="PrescribingVeterinarian">
+                <span></span>
+                <input type="text" style="display: block" />
+            </td>
+            <td class="Cost" data-field="Cost">
+                <span></span>
+                <input type="text" style="display: block" />
+            </td>
+            <td class="Diagnosis" data-field="Diagnosis">
+                <span></span>
+                <input type="text" style="display: block" />
+            </td>
+            <td class="Medication" data-field="Medication">
+                <span></span>
+                <input type="text" style="display: block" />
+            </td>
+            <td class="DosageAndUnit" data-field="DosageAndUnit">
+                <span></span>
+                <input type="text" style="display: block" />
+            </td>
+            <td class="StartDate" data-field="StartDate">
+                <span></span>
+                <input type="date" style="display: block" />
+            </td>
+            <td class="EndDate" data-field="EndDate">
+                <span></span>
+                <input type="date" style="display: block" />
+            </td>
+            <td>
+                <button type="button" class="btn btn-success btn-sm save-new-treatment-button">Save</button>
+                <button type="button" class="btn btn-warning btn-sm cancel-new-treatment-button">Cancel</button>
+            </td>
+        </tr>`;
+            // Add the row to the table body
+            $("#medicalTreatmentTableBody").prepend(rowHtml);
+        });
 
-    // Create a FormData object from the form
-    let formData = new FormData(form);
 
-    // Perform an AJAX request to send the form data to the server
-    const response = await fetch(form.action, {
-        method: 'POST',
-        body: formData,
-    });
+        
+        $("#medicalTreatmentTableBody").on("click", ".save-new-treatment-button", function () {
+            var row = $(this).closest("tr");
+            var petId = $("#petId").val();
 
-    if (!response.ok) {
-        console.error('Error submitting form', response);
-        console.error(`Error submitting form, status: ${response.status}, status text: ${response.statusText}`);
-    } else {
-        console.log('Form submitted successfully');
-        // refresh the page
-        window.location.reload();
-    }
-}
+            var treatmentData = {
+                TreatmentDescription: row.find("td.TreatmentDescription input").val(),
+                PrescribingVeterinarian: row.find("td.PrescribingVeterinarian input").val(),
+                Cost: row.find("td.Cost input").val(),
+                Diagnosis: row.find("td.Diagnosis input").val(),
+                Medication: row.find("td.Medication input").val(),
+                DosageAndUnit: row.find("td.DosageAndUnit input").val(),
+                StartDate: row.find("td.StartDate input").val(),
+                EndDate: row.find("td.EndDate input").val()
+            };
+
+            $.ajax({
+                url: "AddMedicalTreatment/" + petId,
+                type: 'POST',
+                data: JSON.stringify(treatmentData),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.status === "success") {
+                        console.log('AJAX call succeeded'); // Add this line
+                        // convert row to non-editable
+                        row.find("span").each(function () {
+                            $(this).text($(this).next("input").val());
+                        });
+                        row.find("input").hide();
+                        row.find(".save-new-treatment-button").remove();
+                        row.find(".cancel-new-treatment-button").remove();
+                        row.append('<button type="button" class="btn btn-primary btn-sm edit-button">Edit</button><button type="button" class="btn btn-danger btn-sm delete-button">Delete</button>');
+                    } else {
+                        alert('Error occurred while adding the treatment.');
+                    }
+                },
+                error: function (err) {
+                    alert('Error occurred while adding the treatment.');
+                }
+            });
+        });
+
+        $("#medicalTreatmentTableBody").on("click", ".cancel-new-treatment-button", function () {
+            $(this).closest("tr").remove();
+        });
+

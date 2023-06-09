@@ -1,8 +1,10 @@
+using AdoptSpot.Areas.Identity.Data;
 using AdoptSpot.Data;
 using AdoptSpot.Data.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,10 +32,16 @@ namespace AdoptSpot
             //DbContext configuration
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnectionString")));
             services.AddControllersWithViews();
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+            .AddEntityFrameworkStores<AuthDbContext>()
+            .AddDefaultUI()
+            .AddDefaultTokenProviders();
+            services.AddRazorPages();
             services.AddScoped<IPetService, PetService>();
             services.AddScoped<IImageService, ImageService>();
             services.AddScoped<IVaccinationService, VaccinationService>();
             services.AddScoped<IMedicalTreatmentService, MedicalTreatmentService>();
+            services.AddControllersWithViews().AddRazorRuntimeCompilation();
             services.AddControllers().AddJsonOptions(x =>
     x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
 
@@ -56,7 +64,7 @@ namespace AdoptSpot
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -64,8 +72,9 @@ namespace AdoptSpot
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
-           
+
 
         }
     }

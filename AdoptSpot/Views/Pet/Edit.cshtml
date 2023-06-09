@@ -12,9 +12,6 @@
     <style>
         .custom-table {
             width: 100%;
-           
-           
-            
         }
 
             .custom-table th, .custom-table td {
@@ -22,21 +19,55 @@
                 text-align: left;
                 border-bottom: 1px solid #ddd;
                 background-color: #f2f2f2;
-                
             }
-
-            
-      
     </style>
 
 </head>
+
 <form asp-action="Edit" enctype="multipart/form-data" method="post" id="editForm">
     <input type="hidden" asp-for="Id" />
-    <div class="form-group">
-        <label asp-for="Name"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
+    <div class="form-row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label asp-for="Name"></label>
+                <input asp-for="Name" class="form-control form-control-sm" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Species"></label>
+                <input asp-for="Species" class="form-control form-control-sm" />
+                <span asp-validation-for="Species" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Age"></label>
+                <input asp-for="Age" class="form-control form-control-sm" />
+                <span asp-validation-for="Age" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label asp-for="PetGender"></label>
+                <input asp-for="PetGender" class="form-control form-control-sm" />
+                <span asp-validation-for="PetGender" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Color"></label>
+                <input asp-for="Color" class="form-control form-control-sm" />
+                <span asp-validation-for="Color" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Breed"></label>
+                <input asp-for="Breed" class="form-control form-control-sm" />
+                <span asp-validation-for="Breed" class="text-danger"></span>
+            </div>
+        </div>
     </div>
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" class="form-control form-control-sm"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
     <div class="form-group">
         <label>Upload new images:</label>
         <input type="file" name="newImages" id="newImages" multiple class="form-control-file" />
@@ -210,244 +241,22 @@
         </table>
         <button type="button" class="btn btn-primary btn-sm add-button">Add Medical Treatment</button>
     </div>
-    <div class="form-group">
-        <label asp-for="Species"></label>
-        <input asp-for="Species" class="form-control" />
-        <span asp-validation-for="Species" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Age"></label>
-        <input asp-for="Age" class="form-control" />
-        <span asp-validation-for="Age" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="PetGender"></label>
-        <input asp-for="PetGender" class="form-control" />
-        <span asp-validation-for="PetGender" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Color"></label>
-        <input asp-for="Color" class="form-control" />
-        <span asp-validation-for="Color" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Breed"></label>
-        <input asp-for="Breed" class="form-control" />
-        <span asp-validation-for="Breed" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Description"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
+
+
+    <div id="removedVaccinations" style="display: none;"></div>
     <div class="form-group">
         <button type="submit" class="btn btn-primary">Update</button>
         <a asp-action="Index" class="btn btn-secondary">Cancel</a>
     </div>
-
-    <div id="removedVaccinations" style="display: none;"></div>
 </form>
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script src="~/Scripts/EditViewScriptMedicalTreatment.js"></script>
+    <script src="~/Scripts/EditViewScriptVaccinations.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
-
-    <script src="~/Scripts/EditViewScriptVaccinations.js"></script>
-
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script type="text/javascript">
-        $(function () {
-
-            $("#medicalTreatmentTableBody .edit-button").on("click", function () {
-                var row = $(this).closest("tr");
-                $("td", row).each(function (i) {
-                    if (i < 8) { // Exclude last cell with buttons
-                        var span = $(this).find("span");
-                        var input = $(this).find("input");
-                        input.width(input.val().length *11);
-                        if (span.length > 0) {
-                            span.hide();
-                            input.show();
-                        } else {
-                            var text = $(this).text();
-                            $(this).html('<span>' + text + '</span><input type="text" value="' + text + '" style="display: none" />');
-                            $(this).find("span").hide();
-                            $(this).find("input").show();
-                        }
-                        $(this).css("white-space", "nowrap");
-                    }
-                });
-                row.find(".update-button").show().css("display", "inline-block");;
-                row.find(".cancel-button").show().css("display", "inline-block");;
-                $(this).hide();
-            });
-
-            $("#medicalTreatmentTableBody .update-button").on("click", function () {
-                var row = $(this).closest("tr");
-                var treatment = {};
-                var petId = $("#petId").val();
-                treatment.Id = $(this).data('id');
-                $("td", row).each(function (i) {
-                    if (i < 8) {
-                        var span = $(this).find("span");
-                        var input = $(this).find("input");
-                        span.html(input.val());
-                        span.show();
-                        input.hide();
-                        treatment[$(this).data('field')] = input.val();
-                    }
-                });
-
-                row.find(".edit-button").show();
-                row.find(".cancel-button").hide();
-                $(this).hide();
-
-                $.ajax({
-                    type: "POST",
-                    url: "UpdateMedicalTreatment/" + petId ,
-                    data: JSON.stringify(treatment),
-                    contentType: "application/json", 
-                    dataType: "json"
-                });
-            });
-
-            $("#medicalTreatmentTableBody .cancel-button").on("click", function () {
-                var row = $(this).closest("tr");
-                $("td", row).each(function (i) {
-                    if (i < 8) {
-                        var span = $(this).find("span");
-                        var input = $(this).find("input");
-                        input.val(span.html());
-                        span.show();
-                        input.hide();
-                    }
-                });
-                row.find(".edit-button").show();
-                row.find(".update-button").hide();
-                $(this).hide();
-            });
-        });
-
-        $("#medicalTreatmentTableBody .delete-button").on("click", function () {
-            var id = $(this).data("id");
-            var petId = $("#petId").val();
-            var row = $(this).closest("tr"); // Store the row
-            if (confirm('Are you sure to delete this record?')) {
-                $.ajax({
-                    url: "DeleteMedicalTreatment/" + petId + "/" + id,
-                    type: 'DELETE',
-                    success: function (response) {
-                        if (response.status === "success") {
-                            // remove row from table
-                            row.remove(); // Use the stored row here
-                        } else {
-                            alert('Error occurred while deleting the treatment.')
-                        }
-                    },
-                    error: function (err) {
-                        alert('Error occurred while deleting the treatment.')
-                    }
-                });
-            }
-        });
-
-        $(".add-button").on("click", function () {
-            // Define the row HTML
-            var rowHtml = `
-        <tr>
-            <td class="TreatmentDescription" data-field="TreatmentDescription">
-                <span></span>
-                <input type="text" style="display: block" />
-            </td>
-            <td class="PrescribingVeterinarian" data-field="PrescribingVeterinarian">
-                <span></span>
-                <input type="text" style="display: block" />
-            </td>
-            <td class="Cost" data-field="Cost">
-                <span></span>
-                <input type="text" style="display: block" />
-            </td>
-            <td class="Diagnosis" data-field="Diagnosis">
-                <span></span>
-                <input type="text" style="display: block" />
-            </td>
-            <td class="Medication" data-field="Medication">
-                <span></span>
-                <input type="text" style="display: block" />
-            </td>
-            <td class="DosageAndUnit" data-field="DosageAndUnit">
-                <span></span>
-                <input type="text" style="display: block" />
-            </td>
-            <td class="StartDate" data-field="StartDate">
-                <span></span>
-                <input type="date" style="display: block" />
-            </td>
-            <td class="EndDate" data-field="EndDate">
-                <span></span>
-                <input type="date" style="display: block" />
-            </td>
-            <td>
-                <button type="button" class="btn btn-success btn-sm save-new-treatment-button">Save</button>
-                <button type="button" class="btn btn-warning btn-sm cancel-new-treatment-button">Cancel</button>
-            </td>
-        </tr>`;
-            // Add the row to the table body
-            $("#medicalTreatmentTableBody").prepend(rowHtml);
-        });
-
-
-        
-        $("#medicalTreatmentTableBody").on("click", ".save-new-treatment-button", function () {
-            var row = $(this).closest("tr");
-            var petId = $("#petId").val();
-
-            var treatmentData = {
-                TreatmentDescription: row.find("td.TreatmentDescription input").val(),
-                PrescribingVeterinarian: row.find("td.PrescribingVeterinarian input").val(),
-                Cost: row.find("td.Cost input").val(),
-                Diagnosis: row.find("td.Diagnosis input").val(),
-                Medication: row.find("td.Medication input").val(),
-                DosageAndUnit: row.find("td.DosageAndUnit input").val(),
-                StartDate: row.find("td.StartDate input").val(),
-                EndDate: row.find("td.EndDate input").val()
-            };
-
-            $.ajax({
-                url: "AddMedicalTreatment/" + petId,
-                type: 'POST',
-                data: JSON.stringify(treatmentData),
-                contentType: 'application/json; charset=utf-8',
-                dataType: 'json',
-                success: function (response) {
-                    if (response.status === "success") {
-                        console.log('AJAX call succeeded'); // Add this line
-                        // convert row to non-editable
-                        row.find("span").each(function () {
-                            $(this).text($(this).next("input").val());
-                        });
-                        row.find("input").hide();
-                        row.find(".save-new-treatment-button").remove();
-                        row.find(".cancel-new-treatment-button").remove();
-                        row.append('<button type="button" class="btn btn-primary btn-sm edit-button">Edit</button><button type="button" class="btn btn-danger btn-sm delete-button">Delete</button>');
-                    } else {
-                        alert('Error occurred while adding the treatment.');
-                    }
-                },
-                error: function (err) {
-                    alert('Error occurred while adding the treatment.');
-                }
-            });
-        });
-
-        $("#medicalTreatmentTableBody").on("click", ".cancel-new-treatment-button", function () {
-            $(this).closest("tr").remove();
-        });
-
-    </script>
-
 
 
 }

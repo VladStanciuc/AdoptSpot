@@ -14,7 +14,7 @@ namespace AdoptSpot.Data
         {
 
         }
-        public DbSet<User> Users { get; set; }
+        
         public DbSet<Pet> Pets { get; set; }
         public DbSet<Adoption> Adoptions { get; set; }
         public DbSet<MedicalRecord> MedicalRecord { get; set; }
@@ -24,12 +24,6 @@ namespace AdoptSpot.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
-
-            modelBuilder.Entity<Adoption>()
-                .HasOne(a => a.User)
-                .WithMany(u => u.Adoptions)
-                .HasForeignKey(a => a.UserId);
 
             modelBuilder.Entity<Adoption>()
                 .HasOne(a => a.Pet)

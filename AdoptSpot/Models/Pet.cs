@@ -22,7 +22,7 @@ namespace AdoptSpot.Models
         public string Breed { get; set; }
         public string Description { get; set; }
         public DateTime CreatedAt { get; set; }
-        // public DateTime UpdatedAt { get; set; }
+        
         public ICollection<Adoption> Adoptions { get; set; }
         public MedicalRecord MedicalRecord { get; set; }
         public ICollection<ImageModel> Images { get; set; }

@@ -139,7 +139,7 @@ namespace AdoptSpot.Controllers
           
             await _service.UpdateAsync(id, petToUpdate);
 
-            return View(petToUpdate);
+            return RedirectToAction("Index");
         }
       
 
