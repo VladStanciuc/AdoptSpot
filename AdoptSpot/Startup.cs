@@ -32,10 +32,8 @@ namespace AdoptSpot
             //DbContext configuration
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnectionString")));
             services.AddControllersWithViews();
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-            .AddEntityFrameworkStores<AuthDbContext>()
-            .AddDefaultUI()
-            .AddDefaultTokenProviders();
+          
+                   
             services.AddRazorPages();
             services.AddScoped<IPetService, PetService>();
             services.AddScoped<IImageService, ImageService>();

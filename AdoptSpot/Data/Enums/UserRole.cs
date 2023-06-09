@@ -7,7 +7,9 @@ namespace AdoptSpot.Data.Enums
 {
    public enum UserRole
     {
-        Adopter,
+        SuperAdmin,
+        NormalUser,
         Admin
+       
     }
 }
