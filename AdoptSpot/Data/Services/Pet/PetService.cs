@@ -189,16 +189,9 @@ namespace AdoptSpot.Data.Services
             }
 
             // Check for duplicate treatments
-            var existingTreatment = petToUpdate.MedicalRecord.MedicalTreatments
-                .FirstOrDefault(mt =>
-                    mt.TreatmentDescription == newMedicalTreatment.TreatmentDescription &&
-                    mt.PrescribingVeterinarian == newMedicalTreatment.PrescribingVeterinarian); 
-                    
+         
 
-            if (existingTreatment != null)
-            {
-                throw new ArgumentException("Duplicate medical treatment");
-            }
+           
             petToUpdate.MedicalRecord.MedicalTreatments.Add(newMedicalTreatment);
             await UpdateAsync(petToUpdate.Id,petToUpdate);
         }

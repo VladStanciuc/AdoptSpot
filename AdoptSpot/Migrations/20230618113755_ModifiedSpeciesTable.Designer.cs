@@ -4,14 +4,16 @@ using AdoptSpot.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AdoptSpot.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230618113755_ModifiedSpeciesTable")]
+    partial class ModifiedSpeciesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -164,7 +166,7 @@ namespace AdoptSpot.Migrations
                     b.Property<int>("PetGender")
                         .HasColumnType("int");
 
-                    b.Property<int>("SpeciesType")
+                    b.Property<int>("SpeciesId")
                         .HasColumnType("int");
 
                     b.Property<int>("TypeId")
@@ -172,7 +174,45 @@ namespace AdoptSpot.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("SpeciesId");
+
                     b.ToTable("Pet");
+                });
+
+            modelBuilder.Entity("AdoptSpot.Models.Species", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AverageLifespan")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AverageWeight")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Behavior")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Habitat")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PetId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Size")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SpeciesDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SpeciesType")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Species");
                 });
 
             modelBuilder.Entity("AdoptSpot.Models.Vaccination", b =>
@@ -254,6 +294,17 @@ namespace AdoptSpot.Migrations
                     b.Navigation("MedicalRecord");
                 });
 
+            modelBuilder.Entity("AdoptSpot.Models.Pet", b =>
+                {
+                    b.HasOne("AdoptSpot.Models.Species", "Species")
+                        .WithMany("Pets")
+                        .HasForeignKey("SpeciesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Species");
+                });
+
             modelBuilder.Entity("AdoptSpot.Models.Vaccination", b =>
                 {
                     b.HasOne("AdoptSpot.Models.MedicalRecord", "MedicalRecord")
@@ -279,6 +330,11 @@ namespace AdoptSpot.Migrations
                     b.Navigation("Images");
 
                     b.Navigation("MedicalRecord");
+                });
+
+            modelBuilder.Entity("AdoptSpot.Models.Species", b =>
+                {
+                    b.Navigation("Pets");
                 });
 #pragma warning restore 612, 618
         }

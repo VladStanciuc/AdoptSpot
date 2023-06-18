@@ -108,7 +108,7 @@ namespace AdoptSpot.Controllers
         }
         [HttpPost]
         [Route("Edit/{id}")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,TypeId,Species,Age,PetGender,Color,Breed,Description,CreatedAt,Adoptions,MedicalRecord,Images")] Pet pet, 
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,TypeId,SpeciesType,Age,PetGender,Color,Breed,Description,CreatedAt,Adoptions,MedicalRecord,Images")] Pet pet, 
             List<IFormFile> newImages, [Bind(Prefix = "MedicalRecord")] MedicalRecord updatedMedicalRecord, 
             [Bind(Prefix = "MedicalRecord.MedicalTreatments")] ICollection<MedicalTreatment> updatedMedicalTreatments,
              [Bind(Prefix = "MedicalRecord.Vaccines")] ICollection<Vaccination> updatedVaccinations)
@@ -126,7 +126,7 @@ namespace AdoptSpot.Controllers
                 return NotFound();
             }
             petToUpdate.Name = pet.Name;
-            petToUpdate.Species = pet.Species;
+            petToUpdate.SpeciesType = pet.SpeciesType;
             petToUpdate.Age = pet.Age;
             petToUpdate.PetGender = pet.PetGender;
             petToUpdate.Color = pet.Color;

@@ -15,7 +15,7 @@ namespace AdoptSpot.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public int TypeId { get; set; }
-        public string Species { get; set; }
+        public SpeciesType SpeciesType { get; set; }
         public int Age { get; set; }
         public  PetGender PetGender { get; set; }
         public string Color { get; set; }
