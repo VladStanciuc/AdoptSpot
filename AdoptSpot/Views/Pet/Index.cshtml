@@ -1,9 +1,10 @@
 ﻿@model IEnumerable<AdoptSpot.Models.Pet>
-
+@using Microsoft.AspNetCore.Identity
+@using AdoptSpot.Areas.Identity.Data
 @{
     ViewData["Title"] = "Pets";
 }
-
+@inject SignInManager<ApplicationUser> SignInManager
 <head>
     <style>
         .grid-container {
@@ -37,7 +38,7 @@
             height: 100%;
         }
 
-      
+
         .pet-info {
             padding: 20px;
             flex-grow: 1;
@@ -61,6 +62,7 @@
             font-size: 14px;
             overflow-y: auto;
         }
+
         .carousel-item {
             background-position: center;
             background-repeat: no-repeat;
@@ -69,15 +71,45 @@
             height: 100%;
         }
 
+        .top-right {
+            position: absolute;
+            right: 40px;
+            top: 100px;
+        }
+
+        .button-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+            .button-row > a {
+                flex-grow: 1;
+                margin: 0 5px;
+            }
+
+            .button-row.top > a {
+                margin: 0 10px;
+            }
     </style>
 </head>
-
-
+<div class="top-right">
+    @if (User.IsInRole("SuperAdmin"))
+    {
+        <a href="@Url.Action("Create", "Pet")" class="btn btn-primary">
+            <i class="fas fa-plus"></i>
+            <i class="fas fa-cat"></i>
+            Add a new pet
+        </a>
+    }
+</div>
 
 
 <h2>@ViewData["Title"]</h2>
 
+
 <div class="grid-container">
+
     @foreach (var pet in Model.Select((value, index) => new { value, index }))
     {
         <div class="grid-item">
@@ -91,9 +123,9 @@
                     }
                     @foreach (var image in pet.value.Images)
                     {
-                        <div class="carousel-item @(first?Html.Raw("active"):Html.Raw("")) item1" style="background-image: url('@Url.Action("GetImage", "Image", new { id = image.Id })')">
+                        <div class="carousel-item @(first ? Html.Raw("active") : Html.Raw("")) item1" style="background-image: url('@Url.Action("GetImage", "Image", new { id = image.Id })')">
                         </div>
-                       
+
                         first = false;
                     }
 
@@ -112,18 +144,55 @@
             <!-- End of Swiper -->
             <!-- Pet properties -->
             <div class="pet-info">
-                <p><strong>Name:</strong> @pet.value.Name</p>
-                <p><strong>Species:</strong> @pet.value.Species</p>
-                <p><strong>Age:</strong> @pet.value.Age</p>
-                <p><strong>Gender:</strong> @pet.value.PetGender</p>
-                <p><strong>Color:</strong> @pet.value.Color</p>
-                <p><strong>Breed:</strong> @pet.value.Breed</p>
-                <p><strong>Description:</strong> @pet.value.Description</p>
-                <a href="@Url.Action("Details", "Pet", new { id = pet.value.Id })" class="btn btn-primary">Show Details</a>
-                <a href="@Url.Action("Edit", "Pet", new { id = pet.value.Id })" class="btn btn-warning">Edit</a>
-                <a href="@Url.Action("Delete", "Pet", new { id = pet.value.Id })" class="btn btn-danger">Delete</a>
+                <h5 class="text-primary">@pet.value.Name</h5>
+                <hr>
+                <ul class="list-unstyled">
+                    <li>
+                        <strong>Species:</strong> <span>@pet.value.Species</span>
+                    </li>
+                    <li>
+                        <strong>Age:</strong> <span>@pet.value.Age</span>
+                    </li>
+                    <li>
+                        <strong>Gender:</strong> <span>@pet.value.PetGender</span>
+                    </li>
+
+                    <li>
+                        <strong>Breed:</strong> <span>@pet.value.Breed</span>
+                    </li>
+                </ul>
+                <p>
+                    <strong>Description:</strong>
+                    <br>
+                    <span>@pet.value.Description</span>
+                </p>
+                <div class="button-row top">
+                    <a href="@Url.Action("Details", "Pet", new { id = pet.value.Id })" class="btn btn-primary">
+                        <i class="fas fa-info-circle"></i> Show Details
+                    </a>
+                    <a href="@Url.Action("RequestAdoption", "Adoption", new { id = pet.value.Id })" class="btn btn-success">
+                        <i class="fas fa-hand-paper"></i> Apply for Adoption
+                    </a>
+                </div>
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    @if (User.IsInRole("SuperAdmin"))
+                    {
+                        <div class="button-row">
+                            <a href="@Url.Action("Edit", "Pet", new { id = pet.value.Id })" class="btn btn-warning">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a href="@Url.Action("Delete", "Pet", new { id = pet.value.Id })" class="btn btn-danger">
+                                <i class="fas fa-trash-alt"></i> Delete
+                            </a>
+                        </div>
+                    }
+
+                }
+
 
             </div>
+
         </div>
     }
 
