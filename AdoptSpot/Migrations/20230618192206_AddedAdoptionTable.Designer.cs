@@ -4,14 +4,16 @@ using AdoptSpot.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AdoptSpot.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230618192206_AddedAdoptionTable")]
+    partial class AddedAdoptionTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -117,59 +119,6 @@ namespace AdoptSpot.Migrations
                     b.ToTable("Adoption");
                 });
 
-            modelBuilder.Entity("AdoptSpot.Models.BreedCharacteristics", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("CommonHealthIssues")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("LifeSpanInYears")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("OtherDetails")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Size")
-                        .HasMaxLength(50)
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("BreedCharacteristics");
-                });
-
-            modelBuilder.Entity("AdoptSpot.Models.BreedTemperament", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("BreedId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Score")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TemperamentType")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BreedId");
-
-                    b.ToTable("BreedTemperaments");
-                });
-
             modelBuilder.Entity("AdoptSpot.Models.ImageModel", b =>
                 {
                     b.Property<int>("Id")
@@ -268,7 +217,7 @@ namespace AdoptSpot.Migrations
                     b.Property<int>("Age")
                         .HasColumnType("int");
 
-                    b.Property<string>("BreedName")
+                    b.Property<string>("Breed")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Color")
@@ -295,54 +244,6 @@ namespace AdoptSpot.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Pet");
-                });
-
-            modelBuilder.Entity("AdoptSpot.Models.UserPreferenceTemperamentScore", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("Score")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Temperament")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserPreferencesId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserPreferencesId");
-
-                    b.ToTable("UserPreferenceTemperamentScore");
-                });
-
-            modelBuilder.Entity("AdoptSpot.Models.UserPreferences", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("PrefferedLifeSpan")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PrefferedSize")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
-
-                    b.ToTable("UserPreferences");
                 });
 
             modelBuilder.Entity("AdoptSpot.Models.Vaccination", b =>
@@ -397,17 +298,6 @@ namespace AdoptSpot.Migrations
                     b.Navigation("Pet");
                 });
 
-            modelBuilder.Entity("AdoptSpot.Models.BreedTemperament", b =>
-                {
-                    b.HasOne("AdoptSpot.Models.BreedCharacteristics", "BreedCharacteristics")
-                        .WithMany("BreedTemperaments")
-                        .HasForeignKey("BreedId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("BreedCharacteristics");
-                });
-
             modelBuilder.Entity("AdoptSpot.Models.ImageModel", b =>
                 {
                     b.HasOne("AdoptSpot.Models.Pet", "Pet")
@@ -441,26 +331,6 @@ namespace AdoptSpot.Migrations
                     b.Navigation("MedicalRecord");
                 });
 
-            modelBuilder.Entity("AdoptSpot.Models.UserPreferenceTemperamentScore", b =>
-                {
-                    b.HasOne("AdoptSpot.Models.UserPreferences", "UserPreferences")
-                        .WithMany("UserPreferenceTemperamentScores")
-                        .HasForeignKey("UserPreferencesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("UserPreferences");
-                });
-
-            modelBuilder.Entity("AdoptSpot.Models.UserPreferences", b =>
-                {
-                    b.HasOne("AdoptSpot.Areas.Identity.Data.ApplicationUser", "User")
-                        .WithOne("UserPreferences")
-                        .HasForeignKey("AdoptSpot.Models.UserPreferences", "UserId");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("AdoptSpot.Models.Vaccination", b =>
                 {
                     b.HasOne("AdoptSpot.Models.MedicalRecord", "MedicalRecord")
@@ -475,13 +345,6 @@ namespace AdoptSpot.Migrations
             modelBuilder.Entity("AdoptSpot.Areas.Identity.Data.ApplicationUser", b =>
                 {
                     b.Navigation("Adoptions");
-
-                    b.Navigation("UserPreferences");
-                });
-
-            modelBuilder.Entity("AdoptSpot.Models.BreedCharacteristics", b =>
-                {
-                    b.Navigation("BreedTemperaments");
                 });
 
             modelBuilder.Entity("AdoptSpot.Models.MedicalRecord", b =>
@@ -498,11 +361,6 @@ namespace AdoptSpot.Migrations
                     b.Navigation("Images");
 
                     b.Navigation("MedicalRecord");
-                });
-
-            modelBuilder.Entity("AdoptSpot.Models.UserPreferences", b =>
-                {
-                    b.Navigation("UserPreferenceTemperamentScores");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AdoptSpot.Areas.Identity.Data;
+using AdoptSpot.Data.Base;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -8,7 +10,7 @@ using System.Threading.Tasks;
 namespace AdoptSpot.Models
 {
     [Table("Adoption")]
-    public class Adoption
+    public class Adoption : IEntityBase
     {
         [Key]
         public int Id { get; set; }
@@ -16,10 +18,9 @@ namespace AdoptSpot.Models
         public int PetId { get; set; }
         public Pet Pet { get; set; }
         public DateTime AdoptionDate { get; set; }
-        public string Status { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
+        public string AdoptionStatus { get; set; }
+        public string AdopterUserId { get; set; }
+        public ApplicationUser AdopterUser { get; set; }
 
-    
     }
 }

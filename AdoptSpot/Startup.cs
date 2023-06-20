@@ -36,6 +36,7 @@ namespace AdoptSpot
                    
             services.AddRazorPages();
             services.AddScoped<IPetService, PetService>();
+            services.AddScoped<IAdoptionService, AdoptionService>();
             services.AddScoped<IImageService, ImageService>();
             services.AddScoped<IVaccinationService, VaccinationService>();
             services.AddScoped<IMedicalTreatmentService, MedicalTreatmentService>();

@@ -1,0 +1,57 @@
+﻿@model AdoptSpot.ViewModels.UserAdoptionViewModel
+@using AdoptSpot.ViewModels
+@{
+    ViewData["Title"] = "User Adopter View";
+}
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .card-img-top {
+            height: 500px; /* Set the image height */
+            object-fit: cover; /* This will make the image cover the space, potentially cropping it */
+        }
+        .adoption-section {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<div class="container my-4">
+    <div class="card">
+        <div class="card-header">
+            <h2>Your Information Details</h2>
+        </div>
+        <div class="card-body">
+            <p><strong>Name:</strong> @Model.FirstName @Model.LastName</p>
+            <p><strong>Email:</strong> @Model.Email</p>
+            <p><strong>Phone:</strong> @Model.Phone</p>
+        </div>
+    </div>
+    <div class="adoption-section">
+        <h2>Pets You've Applied to Adopt</h2>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            @foreach (var pet in Model.AdoptedPets)
+            {
+                <div class="col">
+                    <div class="card">
+                        @if (pet.Images != null && pet.Images.Any())
+                        {
+                            <img src="@Url.Action("GetImage", "Image", new { id = pet.Images.First().Id })" class="card-img-top" alt="Pet image">
+                        }
+                    <div class="card-body">
+                        <h5 class="card-title" style="font-weight: bold; color: #333;">@pet.Name</h5>
+                        <p class="card-text"><strong>Adoption Status:</strong> <span style="color: red; font-weight: bold;">Pending</span></p>
+                        <p class="card-text"><strong>Species:</strong> @pet.SpeciesType</p>
+                        <p class="card-text"><strong>Age:</strong> @pet.Age</p>
+                        <p class="card-text"><strong>Gender:</strong> @pet.PetGender</p>
+                        <p class="card-text"><strong>Color:</strong> @pet.Color</p>
+                        <p class="card-text"><strong>Breed:</strong> @pet.BreedName</p>
+                        <p class="card-text"><strong>Description:</strong> @pet.Description</p>
+                    </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

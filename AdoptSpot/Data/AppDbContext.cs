@@ -1,4 +1,5 @@
-﻿using AdoptSpot.Models;
+﻿using AdoptSpot.Areas.Identity.Data;
+using AdoptSpot.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,12 @@ namespace AdoptSpot.Data
         {
 
         }
-        
+        public DbSet<BreedTemperament> BreedTemperaments { get; set; }
+        public DbSet<UserPreferences> UserPreferences { get; set; }
+
+        public DbSet<UserPreferenceTemperamentScore> UserPreferenceTemperamentScore { get; set; }
+
+        public DbSet<BreedCharacteristics> BreedCharacteristics { get; set; }
         public DbSet<Pet> Pets { get; set; }
         public DbSet<Adoption> Adoptions { get; set; }
         public DbSet<MedicalRecord> MedicalRecord { get; set; }
@@ -49,6 +55,17 @@ namespace AdoptSpot.Data
                     .HasOne(v => v.MedicalRecord)
                     .WithMany(mr => mr.Vaccinations)
                     .HasForeignKey(v => v.MedicalRecordId);
+
+            modelBuilder.Entity<BreedTemperament>()
+                     .HasOne(bt => bt.BreedCharacteristics)
+                     .WithMany(bc => bc.BreedTemperaments)
+                      .HasForeignKey(bt => bt.BreedId);
+
+            modelBuilder.Entity<ApplicationUser>()
+            .HasOne(a => a.UserPreferences)
+            .WithOne(b => b.User)
+            .HasForeignKey<UserPreferences>(b => b.UserId);
+
 
         }
     }

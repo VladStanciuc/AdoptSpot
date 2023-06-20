@@ -1,0 +1,59 @@
+﻿@model AdoptSpot.Models.UserPreferencesViewModel
+@using AdoptSpot.Data.Enums
+@{
+    ViewData["Title"] = "Create";
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<h2>Complete the information in this form for pet recommendations</h2>
+
+<form asp-action="Create" class="p-5 border rounded bg-light">
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label asp-for="PreferredSize" class="font-weight-bold">Please, select the pet size</label>
+            <select asp-for="PreferredSize" class="form-control form-control-sm" asp-items="Html.GetEnumSelectList<Size>()"></select>
+        </div>
+        <div class="form-group col-md-6">
+            <label asp-for="PreferredLifeSpan" class="font-weight-bold">Please, select the pet average lifespan</label>
+            <select asp-for="PreferredLifeSpan" class="form-control form-control-sm" asp-items="Html.GetEnumSelectList<LifeSpanInYears>()"></select>
+            <small id="lifeSpanHelp" class="form-text text-muted">Short = 0-5 years average lifespan. Medium = 6-10 average lifespan. Long = 10+ average lifespan.</small>
+        </div>
+
+    </div>
+
+    <h3 class="mt-5 mb-4">Please, select the temperament characteristics of your preferred pet</h3>
+    <p class="font-italic">Note: 1 is the minimum value and 5 the maximum value.</p>
+    <p class="font-italic mb-4">The higher the value the most likely the pet is to have that characteristic</p>
+    <div class="row">
+        @for (int i = 0; i < Model.UserPreferenceTemperamentScores.Count; i++)
+        {
+            <div class="col-md-6 mb-4">
+                <div class="form-group">
+                    <p class="form-control-plaintext text-uppercase font-weight-bold">@Model.UserPreferenceTemperamentScores[i].Temperament.ToString()</p>
+                    <input type="hidden" asp-for="@Model.UserPreferenceTemperamentScores[i].Temperament" />
+                </div>
+                <div class="form-group">
+                    <select asp-for="@Model.UserPreferenceTemperamentScores[i].Score" class="form-control">
+                        @for (int j = 1; j <= 5; j++)
+                        {
+                            <option value="@j">@j</option>
+                        }
+                    </select>
+                    <span asp-validation-for="@Model.UserPreferenceTemperamentScores[i].Score" class="text-danger"></span>
+                </div>
+            </div>
+        }
+    </div>
+
+
+    <div class="form-group">
+        <input type="submit" value="Submit form" class="btn btn-primary" />
+    </div>
+</form>
+
+<script>
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>

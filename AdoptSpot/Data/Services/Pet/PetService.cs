@@ -209,5 +209,12 @@ namespace AdoptSpot.Data.Services
 
             return medicalTreatments;
         }
+
+        public async Task<Pet> GetByIdWithImages(int petId)
+        {
+            return await _context.Pets
+                        .Include(p => p.Images)
+                        .SingleOrDefaultAsync(p => p.Id == petId);
+        }
     }
 }

@@ -1,0 +1,42 @@
+﻿@model AdoptSpot.Models.UserPreferencesViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2>Create</h2>
+
+<form asp-action="Create">
+    <div class="form-group">
+        <label asp-for="PreferredSize" class="control-label"></label>
+        <select asp-for="PreferredSize" class="form-control" asp-items="Html.GetEnumSelectList<Size>()"></select>
+    </div>
+    <div class="form-group">
+        <label asp-for="PreferredLifeSpan" class="control-label"></label>
+        <select asp-for="PreferredLifeSpan" class="form-control" asp-items="Html.GetEnumSelectList<LifeSpanInYears>()"></select>
+    </div>
+
+    <h3>Please introduce temperament characteristics of your preferred pet:</h3>
+    <div class="row">
+        @for (var i = 0; i < Model.UserPreferenceTemperamentScores.Count; i++)
+        {
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="UserPreferenceTemperamentScores[i].Temperament" class="control-label"></label>
+                    <select asp-for="UserPreferenceTemperamentScores[i].Temperament" class="form-control" asp-items="Html.GetEnumSelectList<Temperament>()"></select>
+                </div>
+                <div class="form-group">
+                    <label>On a scale from 1 to 5, where 1 is the minimum value and 5 the maximum value:</label>
+                    <input asp-for="UserPreferenceTemperamentScores[i].Score" class="form-control" />
+                    <span asp-validation-for="UserPreferenceTemperamentScores[i].Score" class="text-danger"></span>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Create" class="btn btn-primary" />
+    </div>
+</form>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

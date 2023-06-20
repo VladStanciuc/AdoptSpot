@@ -19,7 +19,7 @@ namespace AdoptSpot.Models
         public int Age { get; set; }
         public  PetGender PetGender { get; set; }
         public string Color { get; set; }
-        public string Breed { get; set; }
+        public string BreedName { get; set; }
         public string Description { get; set; }
         public DateTime CreatedAt { get; set; }
         
@@ -32,6 +32,7 @@ namespace AdoptSpot.Models
         {
             Images = new List<ImageModel>();
             MedicalRecord = new MedicalRecord();
+            Adoptions = new List<Adoption>();
         }
        
     }

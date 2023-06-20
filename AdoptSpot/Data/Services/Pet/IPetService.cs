@@ -20,5 +20,6 @@ namespace AdoptSpot.Data.Services
         Task DeleteMedicalTreatmentAsync(Pet petToUpdate,int medicalTreatmentId);
         Task AddMedicalTreatmentAsync(Pet petToUpdate, MedicalTreatment newMedicalTreatment);
         Task<ICollection<MedicalTreatment>> GetMedicalTreatmentsAsync(int petId);
+        Task <Pet>  GetByIdWithImages(int petId);
     }
 }

@@ -130,7 +130,7 @@ namespace AdoptSpot.Controllers
             petToUpdate.Age = pet.Age;
             petToUpdate.PetGender = pet.PetGender;
             petToUpdate.Color = pet.Color;
-            petToUpdate.Breed = pet.Breed;
+            petToUpdate.BreedName = pet.BreedName;
             petToUpdate.Description = pet.Description;
             petToUpdate.CreatedAt = pet.CreatedAt;
             await  _service.UploadImages(petToUpdate, newImages);
@@ -306,6 +306,8 @@ namespace AdoptSpot.Controllers
             return PartialView("_AddVaccination", new Vaccination());
         }
 
+
+    
 
 
     }

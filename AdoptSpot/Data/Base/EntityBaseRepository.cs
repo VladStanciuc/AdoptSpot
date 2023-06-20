@@ -19,8 +19,10 @@ namespace AdoptSpot.Data.Base
         }
         public async Task AddAsync(T entity)
         {
-            await _context.Set<T>().AddAsync(entity);
-            await _context.SaveChangesAsync();
+          
+                await _context.Set<T>().AddAsync(entity);
+                await _context.SaveChangesAsync();
+            
         }
 
         public async Task DeleteAsync(int id)

@@ -25,5 +25,8 @@ namespace AdoptSpot.Areas.Identity.Data
         public UserRole UserRole { get; set; }
 
         public ICollection<Adoption> Adoptions { get; set; }
+
+        public UserPreferences UserPreferences { get; set; }
+
     }
 }

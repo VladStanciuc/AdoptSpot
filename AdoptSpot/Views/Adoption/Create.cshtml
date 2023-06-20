@@ -1,0 +1,123 @@
+﻿@model AdoptSpot.Models.AdoptionViewModel
+@{
+    ViewData["Title"] = "Please fill out this form to finalize the adoption request";
+}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<style>
+    /* CSS to increase checkbox size */
+    .big-checkbox {
+        transform: scale(1.5);
+        
+    }
+</style>
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Create" method="post" class="p-5 border rounded bg-light">
+    <div class="form-row">
+        <input type="hidden" asp-for="PetId" />
+
+        <div class="form-group col-md-6">
+            <div>
+                <label asp-for="ApplicantName" class="font-weight-bold">First Name and LastName</label>
+            </div>
+          
+            <input asp-for="ApplicantName" class="form-control" />
+            <span asp-validation-for="ApplicantName" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-md-6">
+            <div>
+                <label asp-for="ApplicantEmail" class="font-weight-bold">Email</label>
+            </div>
+           
+            <input asp-for="ApplicantEmail" class="form-control" />
+            <span asp-validation-for="ApplicantEmail" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-md-6">
+            <div>
+                <label asp-for="ApplicantPhoneNumber" class="font-weight-bold">Phone Number</label>
+            </div>
+        
+            <input asp-for="ApplicantPhoneNumber" class="form-control" />
+            <span asp-validation-for="ApplicantPhoneNumber" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-md-6">
+            <div>
+                <label asp-for="ApplicantAddress" class="font-weight-bold">Adress</label>
+            </div>
+           
+            <input asp-for="ApplicantAddress" class="form-control" />
+            <span asp-validation-for="ApplicantAddress" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-md-6">
+            <div>
+                <label asp-for="WhyDoYouWantToAdopt" class="font-weight-bold">Kindly provide a brief explanation of your motivation for adopting this pet.</label>
+            </div>
+           
+            <textarea asp-for="WhyDoYouWantToAdopt" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="WhyDoYouWantToAdopt" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-md-6">
+            <div>
+                <label asp-for="PetExperience" class="font-weight-bold">Please provide a concise overview of any previous pet experiences, if applicable</label>
+            </div>
+           
+            <textarea asp-for="PetExperience" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="PetExperience" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-md-6">
+            <div>
+                <label asp-for="HomeEnvironmentDescription" class="font-weight-bold">Please provide home details (house/apartment/yard, if applicable).</label>
+            </div>
+           
+            <textarea asp-for="HomeEnvironmentDescription" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="HomeEnvironmentDescription" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-md-6">
+            <div>
+                <label asp-for="OtherPetsInformation" class="font-weight-bold">Other Pet Information</label>
+            </div>
+           <br />
+            <textarea asp-for="OtherPetsInformation" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="OtherPetsInformation" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-md-6">
+            <div class="form-check">
+                <input asp-for="HasYoungChildren" class="form-check-input big-checkbox" />
+                <label asp-for="HasYoungChildren" class="form-check-label font-weight-bold">Do you have little children ? </label>
+            </div>
+        </div>
+
+        <div class="form-group col-md-6">
+            <div class="form-check">
+                <input asp-for="HasOtherPets" class="form-check-input big-checkbox" />
+                <label asp-for="HasOtherPets" class="form-check-label font-weight-bold">Do you have other pets ?</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Submit Application</button>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
