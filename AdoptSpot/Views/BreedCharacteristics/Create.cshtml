@@ -1,25 +1,71 @@
-﻿@model AdoptSpot.Models.BreedCharacteristics
+﻿@model AdoptSpot.Models.BreedCharacteristicsViewModel
+@using AdoptSpot.Data.Enums
+@{
+    ViewData["Title"] = "Create Breed Characteristics";
+}
 
-<h2>Create New Breed Characteristic</h2>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-<form asp-action="Create">
-    <div class="form-group">
-        <label asp-for="Name" class="control-label"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
+<h2>Create Breed Characteristics</h2>
+
+<form asp-action="Create" class="p-5 border rounded bg-light">
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label asp-for="PreferredSize" class="font-weight-bold">Select the breed size</label>
+            <select asp-for="PreferredSize" class="form-control form-control-sm" asp-items="Html.GetEnumSelectList<Size>()"></select>
+        </div>
+        <div class="form-group col-md-6">
+            <label asp-for="PreferredLifeSpan" class="font-weight-bold">Select the breed average lifespan</label>
+            <select asp-for="PreferredLifeSpan" class="form-control form-control-sm" asp-items="Html.GetEnumSelectList<LifeSpanInYears>()"></select>
+            <small id="lifeSpanHelp" class="form-text text-muted">Short = 0-5 years average lifespan. Medium = 6-10 average lifespan. Long = 10+ average lifespan.</small>
+        </div>
+        <div class="form-group col-md-6">
+            <label asp-for="Name" class="font-weight-bold">Name of the Breed</label>
+            <input asp-for="Name" class="form-control form-control-sm" />
+        </div>
+        <div class="form-group col-md-6">
+            <label asp-for="CommonHealthIssues" class="font-weight-bold">Common Health Problems</label>
+            <input asp-for="CommonHealthIssues" class="form-control form-control-sm" />
+        </div>
+        <div class="form-group col-md-6">
+            <label asp-for="OtherDetails" class="font-weight-bold">Other Breed Details</label>
+            <input asp-for="OtherDetails" class="form-control form-control-sm" />
+        </div>
     </div>
 
-    <!-- Additional form groups for other properties -->
+    <h3 class="mt-5 mb-4">Select the temperament characteristics of the breed</h3>
+    <p class="font-italic">Note: 1 is the minimum value and 5 the maximum value.</p>
+    <p class="font-italic mb-4">The higher the value the more likely the breed is to have that characteristic</p>
+
+    <div class="row">
+        @for (int i = 0; i < Model.BreedTemperament.Count; i++)
+        {
+            <div class="col-md-6 mb-4">
+                <div class="form-group">
+                    <p class="form-control-plaintext text-uppercase font-weight-bold">@Model.BreedTemperament[i].TemperamentType.ToString()</p>
+                    <input type="hidden" asp-for="@Model.BreedTemperament[i].TemperamentType" />
+                </div>
+                <div class="form-group">
+                    <select asp-for="@Model.BreedTemperament[i].Score" class="form-control">
+                        @for (int j = 1; j <= 5; j++)
+                        {
+                            <option value="@j">@j</option>
+                        }
+                    </select>
+                    <span asp-validation-for="@Model.BreedTemperament[i].Score" class="text-danger"></span>
+                </div>
+            </div>
+        }
+    </div>
 
     <div class="form-group">
-        <input type="submit" value="Create" class="btn btn-primary" />
+        <input type="submit" value="Submit form" class="btn btn-primary" />
     </div>
 </form>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+<script>
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>

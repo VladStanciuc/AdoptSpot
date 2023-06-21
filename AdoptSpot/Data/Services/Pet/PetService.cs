@@ -216,5 +216,10 @@ namespace AdoptSpot.Data.Services
                         .Include(p => p.Images)
                         .SingleOrDefaultAsync(p => p.Id == petId);
         }
+
+        public async Task<List<Pet>> GetAllPetsWithImages()
+        {
+            return await _context.Pets.Include(p => p.Images).ToListAsync();
+        }
     }
 }

@@ -12,6 +12,10 @@ namespace AdoptSpot.Models
         {
             BreedTemperament = new List<BreedTemperament>();
         }
+        public string Name { get; set; }
+        public string CommonHealthIssues { get; set; }
+        public string OtherDetails { get; set; }
+
         public Size PreferredSize { get; set; }
         public LifeSpanInYears PreferredLifeSpan { get; set; }
 

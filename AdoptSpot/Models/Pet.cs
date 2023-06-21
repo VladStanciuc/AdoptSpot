@@ -14,14 +14,14 @@ namespace AdoptSpot.Models
         [Key]
         public int Id { get; set; }
         public string Name { get; set; }
-        public int TypeId { get; set; }
+       
         public SpeciesType SpeciesType { get; set; }
         public int Age { get; set; }
         public  PetGender PetGender { get; set; }
         public string Color { get; set; }
         public string BreedName { get; set; }
         public string Description { get; set; }
-        public DateTime CreatedAt { get; set; }
+       
         
         public ICollection<Adoption> Adoptions { get; set; }
         public MedicalRecord MedicalRecord { get; set; }
