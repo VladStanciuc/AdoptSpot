@@ -108,7 +108,7 @@ namespace AdoptSpot.Controllers
         }
         [HttpPost]
         [Route("Edit/{id}")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,TypeId,SpeciesType,Age,PetGender,Color,Breed,Description,Adoptions,MedicalRecord,Images")] Pet pet, 
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,SpeciesType,Age,PetGender,Color,BreedName,Description,Adoptions,MedicalRecord,Images")] Pet pet, 
             List<IFormFile> newImages, [Bind(Prefix = "MedicalRecord")] MedicalRecord updatedMedicalRecord, 
             [Bind(Prefix = "MedicalRecord.MedicalTreatments")] ICollection<MedicalTreatment> updatedMedicalTreatments,
              [Bind(Prefix = "MedicalRecord.Vaccines")] ICollection<Vaccination> updatedVaccinations)
@@ -132,7 +132,7 @@ namespace AdoptSpot.Controllers
             petToUpdate.Color = pet.Color;
             petToUpdate.BreedName = pet.BreedName;
             petToUpdate.Description = pet.Description;
-           // petToUpdate.CreatedAt = pet.CreatedAt;
+         
             await  _service.UploadImages(petToUpdate, newImages);
            
             await _service.UpdateExistingVaccinationsAsync(petToUpdate, updatedVaccinations);
